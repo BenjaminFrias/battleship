@@ -12,11 +12,11 @@ export class Gameboard {
 
 			if (!this.board.has(singleCoorString)) {
 				this.board.set(singleCoorString, ship);
-				this.ships.push(ship);
 			} else {
 				throw Error("This coordinate has a ship already");
 			}
 		}
+		this.ships.push(ship);
 	}
 
 	receiveAttack(coordinates) {
@@ -36,8 +36,8 @@ export class Gameboard {
 		this.prevShoots.set(coordString, coordinates);
 	}
 
-	isGameOver() {
-		// TODO: Check if all player's ships has been sunk
+	areAllShipsSunk() {
+		return this.ships.every((ship) => ship.isDestroyed);
 	}
 
 	getPreviousShoots() {

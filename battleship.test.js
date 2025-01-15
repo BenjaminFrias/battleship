@@ -23,6 +23,7 @@ it("Gameboard: Placing a ship in specific coordinates", () => {
 		length: 2,
 	});
 });
+
 it("Gameboard: Get previous shoots", () => {
 	const gameboard = new Gameboard();
 	const ship = new Ship(2);
@@ -34,4 +35,19 @@ it("Gameboard: Get previous shoots", () => {
 	gameboard.receiveAttack([1, 2], ship);
 
 	expect(gameboard.getPreviousShoots()).toEqual([[1, 2]]);
+});
+
+it("Gameboard: Report all ships have been sunk", () => {
+	const gameboard = new Gameboard();
+	const ship = new Ship(2);
+	ship.hit();
+	ship.hit();
+
+	const coordinates = [
+		[1, 2],
+		[1, 3],
+	];
+	gameboard.placeShip(ship, coordinates);
+
+	expect(gameboard.areAllShipsSunk()).toBeTruthy();
 });
