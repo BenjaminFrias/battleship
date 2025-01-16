@@ -1,0 +1,36 @@
+:root {
+	--grid-size: 10%;
+}
+
+html,
+body {
+	margin: 0;
+}
+
+.container {
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+	width: 100vw;
+	height: 100vh;
+	background: #f0f0f0;
+}
+
+nav {
+	width: 100%;
+	height: 100px;
+	background: red;
+}
+
+#player-gameboard {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(var(--grid-size), 1fr));
+	width: 600px;
+	height: 600px;
+}
+
+#player-gameboard > .board-cell {
+	background: rgb(123, 120, 216);
+	border: 1px solid rgb(57, 53, 117);
+	box-sizing: border-box;
+}
