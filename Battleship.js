@@ -3,24 +3,65 @@ import { Gameboard } from "./Gameboard.js";
 import { Player } from "./Player.js";
 import { DOMHandler } from "./DOMHandler.js";
 
-const player1 = new Player("real", new Gameboard());
-const player2 = new Player("real", new Gameboard());
+let turn = "P1";
 
-const coordinates = [
-	[0, 0],
-	[0, 1],
-];
-const ship = new Ship(coordinates.length);
-player1.gameboard.placeShip(ship, coordinates);
+const player1 = new Player("P1", new Gameboard());
+const player2 = new Player("P2", new Gameboard());
 
-const coordinates2 = [
+const shipLength = 3;
+
+const ship1 = new Ship(shipLength);
+const ship2 = new Ship(shipLength);
+player1.gameboard.placeShip(ship1, [
 	[0, 0],
 	[0, 1],
 	[0, 2],
-];
-const ship2 = new Ship(coordinates.length);
-player2.gameboard.placeShip(ship2, coordinates);
+]);
+
+player2.gameboard.placeShip(ship2, [
+	[2, 4],
+	[2, 5],
+	[2, 6],
+	[2, 7],
+]);
 
 const domHandler = new DOMHandler();
-domHandler.createGameboard();
-domHandler.placeShipInBoard(coordinates2);
+domHandler.createGameboards();
+domHandler.displayShips(player1.name, player1.gameboard.board);
+domHandler.displayShips(player2.name, player2.gameboard.board);
+
+const cells = document.querySelectorAll(".board-cell");
+cells.forEach((cell) => {
+	cell.addEventListener("click", () => {
+		handleAttack(cell);
+	});
+});
+
+function handleAttack(cell) {
+	const coords = Array.from(cell.classList[1].split("-").map(Number));
+	const clickedBoard = cell.classList[2];
+	let player;
+
+	if (clickedBoard == "player-gameboard") {
+		player = player1;
+	} else {
+		player = player2;
+	}
+	const shipOrMiss = player.gameboard.receiveAttack(coords);
+	if (shipOrMiss) {
+		const isSunk = shipOrMiss.isSunk();
+
+		// Print attacked ship
+		console.log(shipOrMiss);
+
+		// TODO: get coordinates of ship
+		if (isSunk) {
+			destroyShip(shipOrMiss);
+		}
+		cell.classList.add("hit");
+	} else {
+		cell.classList.add("miss");
+	}
+}
+
+function destroyShip(ship) {}

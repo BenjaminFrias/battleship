@@ -13,24 +13,46 @@ body {
 	gap: 15px;
 	width: 100vw;
 	height: 100vh;
-	background: #f0f0f0;
+	background-color: #f0f0f0;
 }
 
 nav {
 	width: 100%;
 	height: 100px;
-	background: red;
+	background-color: red;
 }
 
-#player-gameboard {
+#gameboards {
+	position: relative;
+	display: flex;
+	justify-content: center;
+	width: 100%;
+	height: 100%;
+	gap: 50px;
+}
+
+#player-gameboard,
+#opponent-gameboard {
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(var(--grid-size), 1fr));
 	width: 600px;
 	height: 600px;
 }
 
-#player-gameboard > .board-cell {
-	background: rgb(123, 120, 216);
+.board-cell {
+	background-color: rgb(123, 120, 216);
 	border: 1px solid rgb(57, 53, 117);
 	box-sizing: border-box;
+}
+
+.board-cell.miss {
+	background-color: rgb(141, 141, 141);
+}
+
+.board-cell.ship {
+	background-color: rgb(50, 47, 107);
+}
+
+.board-cell.hit {
+	background-color: rgb(226, 30, 30);
 }

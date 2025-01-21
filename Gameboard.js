@@ -24,7 +24,7 @@ export class Gameboard {
 
 		// If coordinates exist in previous shoots, return
 		if (this.prevShoots.has(coordString)) {
-			return "already shooted";
+			return;
 		}
 
 		// If coordinates exist in board, hit ship
@@ -34,6 +34,7 @@ export class Gameboard {
 		}
 
 		this.prevShoots.set(coordString, coordinates);
+		return this.board.get(coordString);
 	}
 
 	areAllShipsSunk() {
