@@ -8,14 +8,22 @@ let turn = "P1";
 const player1 = new Player("P1", new Gameboard());
 const player2 = new Player("P2", new Gameboard());
 
-const shipLength = 3;
+const ship1 = new Ship(4);
+const ship2 = new Ship(4);
+const ship3 = new Ship(4);
 
-const ship1 = new Ship(shipLength);
-const ship2 = new Ship(shipLength);
 player1.gameboard.placeShip(ship1, [
 	[0, 0],
 	[0, 1],
 	[0, 2],
+	[0, 3],
+]);
+
+player1.gameboard.placeShip(ship3, [
+	[5, 4],
+	[5, 5],
+	[5, 6],
+	[5, 7],
 ]);
 
 player2.gameboard.placeShip(ship2, [
@@ -38,8 +46,8 @@ cells.forEach((cell) => {
 });
 
 function handleAttack(cell) {
-	const coords = Array.from(cell.classList[1].split("-").map(Number));
-	const clickedBoard = cell.classList[2];
+	const coords = Array.from(cell.dataset.coords.split("-").map(Number));
+	const clickedBoard = cell.classList[1];
 	let player;
 
 	if (clickedBoard == "player-gameboard") {
@@ -47,21 +55,30 @@ function handleAttack(cell) {
 	} else {
 		player = player2;
 	}
+
 	const shipOrMiss = player.gameboard.receiveAttack(coords);
+
 	if (shipOrMiss) {
-		const isSunk = shipOrMiss.isSunk();
-
-		// Print attacked ship
-		console.log(shipOrMiss);
-
-		// TODO: get coordinates of ship
-		if (isSunk) {
-			destroyShip(shipOrMiss);
+		if (shipOrMiss.isSunk()) {
+			destroyShip(player, clickedBoard, shipOrMiss);
+			const isGameOver = player.gameboard.areAllShipsSunk();
 		}
+
 		cell.classList.add("hit");
 	} else {
 		cell.classList.add("miss");
 	}
 }
 
-function destroyShip(ship) {}
+function destroyShip(player, board, ship) {
+	ship.isDestroyed = true;
+
+	const coordinates = player.gameboard.getShipCoordinates(ship);
+	for (let coord of coordinates) {
+		const cell = document.querySelector(
+			`#${board} > .board-cell[data-coords="${coord.join("-")}"]`
+		);
+
+		cell.classList.add("destroyed");
+	}
+}

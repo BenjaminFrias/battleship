@@ -7,10 +7,6 @@ export class Ship {
 
 	hit() {
 		this.hits++;
-
-		if (this.isSunk()) {
-			this.isDestroyed = true;
-		}
 	}
 
 	isSunk() {

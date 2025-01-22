@@ -16,7 +16,7 @@ export class Gameboard {
 				throw Error("This coordinate has a ship already");
 			}
 		}
-		this.ships.push(ship);
+		this.ships.push({ ship: ship, coords: shipCoords });
 	}
 
 	receiveAttack(coordinates) {
@@ -24,7 +24,7 @@ export class Gameboard {
 
 		// If coordinates exist in previous shoots, return
 		if (this.prevShoots.has(coordString)) {
-			return;
+			return null;
 		}
 
 		// If coordinates exist in board, hit ship
@@ -37,12 +37,25 @@ export class Gameboard {
 		return this.board.get(coordString);
 	}
 
+	getShipCoordinates(ship) {
+		for (const shipData of this.ships) {
+			if (shipData.ship === ship) {
+				return shipData.coords;
+			}
+		}
+		return null;
+	}
+
 	areAllShipsSunk() {
-		return this.ships.every((ship) => ship.isDestroyed);
+		return this.ships.every((obj) => obj.ship.isDestroyed);
 	}
 
 	getPreviousShoots() {
-		return Array.from(this.prevShoots.values());
+		return Array.from(this.prevShoots.keys());
+	}
+
+	hasBeenHit(coords) {
+		return;
 	}
 
 	getCoordinates(coordinates) {

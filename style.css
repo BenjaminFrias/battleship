@@ -56,3 +56,8 @@ nav {
 .board-cell.hit {
 	background-color: rgb(226, 30, 30);
 }
+
+.board-cell.destroyed {
+	background: #3d1503;
+	border: 1px solid rgb(228, 70, 70);
+}

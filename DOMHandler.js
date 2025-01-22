@@ -12,7 +12,7 @@ export class DOMHandler {
 				// Create single board cell
 				const boardCell = document.createElement("div");
 				boardCell.classList.add("board-cell");
-				boardCell.classList.add(`${row}-${col}`);
+				boardCell.dataset.coords = row + "-" + col;
 
 				// copy cell to append it to the opponent board
 				const boardCell2 = boardCell.cloneNode(true);
@@ -48,7 +48,7 @@ export class DOMHandler {
 
 			cells.forEach((cell) => {
 				if (
-					cell.classList[1] ==
+					cell.dataset.coords ==
 					`${currentCoords[0]}-${currentCoords[1]}`
 				) {
 					cell.classList.add("ship");
