@@ -24,17 +24,19 @@ export class Gameboard {
 
 		// If coordinates exist in previous shoots, return
 		if (this.prevShoots.has(coordString)) {
-			return null;
+			return "prevShoot";
 		}
+
+		this.prevShoots.set(coordString, coordinates);
 
 		// If coordinates exist in board, hit ship
 		if (this.board.has(coordString)) {
 			const ship = this.board.get(coordString);
 			ship.hit();
+			return ship;
+		} else {
+			return "miss";
 		}
-
-		this.prevShoots.set(coordString, coordinates);
-		return this.board.get(coordString);
 	}
 
 	getShipCoordinates(ship) {

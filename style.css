@@ -39,6 +39,11 @@ nav {
 	height: 600px;
 }
 
+#player-gameboard.blocked,
+#opponent-gameboard.blocked {
+	pointer-events: none;
+}
+
 .board-cell {
 	background-color: rgb(123, 120, 216);
 	border: 1px solid rgb(57, 53, 117);
