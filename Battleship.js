@@ -3,41 +3,132 @@ import { Gameboard } from "./Gameboard.js";
 import { Player } from "./Player.js";
 import { DOMHandler } from "./DOMHandler.js";
 
+const coordsContainer = document.querySelector("#coordinates-input-container");
+const startPlacingBtn = coordsContainer.querySelector("#start-placing");
+
 let currentPlayer = 1;
 let winner;
 
 const player1 = new Player("P1", new Gameboard());
 const player2 = new Player("P2", new Gameboard());
 
-const ship1 = new Ship(4);
-const ship2 = new Ship(4);
-const ship3 = new Ship(4);
+function createShips() {
+	// const SHIPLENGTHS = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1];
+	const SHIPLENGTHS = [2];
+	const ships = [];
 
-player1.gameboard.placeShip(ship1, [
-	[0, 0],
-	[0, 1],
-	[0, 2],
-	[0, 3],
-]);
+	for (let i in SHIPLENGTHS) {
+		const ship = new Ship(SHIPLENGTHS[i]);
+		ships.push(ship);
+	}
 
-player1.gameboard.placeShip(ship3, [
-	[5, 4],
-	[5, 5],
-	[5, 6],
-	[5, 7],
-]);
+	return ships;
+}
 
-player2.gameboard.placeShip(ship2, [
-	[2, 4],
-	[2, 5],
-	[2, 6],
-	[2, 7],
-]);
+startPlacingBtn.addEventListener("click", () => {
+	handlePlaceShip();
+});
+
+async function handlePlaceShip() {
+	const ships = createShips();
+	const coordInput = coordsContainer.querySelector("#coord-input");
+	const coordSubmitBtn = coordsContainer.querySelector("#coord-submit");
+
+	for (let ship of ships) {
+		console.log("Write your ship coordinates: (e.g: A1,A2...");
+		console.log("Ship length: " + ship.length);
+
+		const coordinates = [];
+		let coordinateCount = 0;
+		let resolveCoordinates;
+
+		const coordinatePromise = new Promise((resolve) => {
+			resolveCoordinates = resolve;
+		});
+
+		coordInput.value = "";
+
+		function handleCoordInput() {
+			const coord = validateCoordinate(coordInput.value);
+
+			if (coord) {
+				const transformedCoords = transformCoordinates(coord);
+
+				coordinates.push(transformedCoords);
+				coordinateCount++;
+				coordInput.value = "";
+
+				if (coordinateCount === ships.length) {
+					resolveCoordinates(coordinates);
+					console.log("PLACIIINGGG SHIIIIIP");
+
+					// Place ship in player's gameboard
+					// player.gameboard.placeShip(ship, coordinates);
+
+					coordSubmitBtn.removeEventListener(
+						"click",
+						handleCoordInput
+					);
+				} else {
+					console.log("Keep writing your ship's coordinate:");
+				}
+			} else {
+				alert("INVALID BRO");
+				coordInput.value = "";
+			}
+		}
+
+		coordSubmitBtn.addEventListener("click", handleCoordInput);
+		await coordinatePromise;
+
+		console.log(coordinates);
+	}
+
+	console.log("YOU'RE PREPARE TO WAR!");
+}
+
+function transformCoordinates(coords) {
+	return coords;
+}
+
+function validateCoordinate(coordinate) {
+	return coordinate;
+}
+
+// TODO: START GAME FUNCTION
 
 const domHandler = new DOMHandler();
 domHandler.createGameboards();
-domHandler.displayShips(player1.name, player1.gameboard.board);
 domHandler.displayShips(player2.name, player2.gameboard.board);
+
+// TODO: Create a place ship system
+
+// let attempts = 4;
+// const shipCoordinates = [];
+// coordsForm.addEventListener("submit", (e) => {
+// 	e.preventDefault();
+
+// 	const coordInput = coordsForm.querySelector("#coord-input");
+
+// 	if (coordInput.value == "") {
+// 		alert("Write a coordinate");
+// 		return;
+// 	}
+
+// 	const coord = Array.from(coordInput.value.split(",").map(Number));
+// 	shipCoordinates.push(coord);
+
+// 	coordInput.value = "";
+// 	attempts--;
+// 	if (attempts == 0) {
+// 		const ship = new Ship(4);
+// 		handlePlaceShip(ship, shipCoordinates);
+// 		domHandler.displayShips(player1.name, player1.gameboard.board);
+// 		coordInput.value = "";
+// 	}
+// });
+
+function startGame() {}
 
 const cells = document.querySelectorAll(".board-cell");
 cells.forEach((cell) => {

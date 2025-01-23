@@ -9,7 +9,18 @@
 	<body>
 		<div class="container">
 			<div id="start-game-page"></div>
-			<div id="Place-ships-page"></div>
+			<div id="Place-ships-page">
+				<div id="coordinates-input-container">
+					<input
+						type="text"
+						name="coordinate"
+						id="coord-input"
+						placeholder="Enter coordinate: "
+					/>
+					<button id="start-placing">Place ships</button>
+					<button id="coord-submit">Set coordinate</button>
+				</div>
+			</div>
 			<div id="gameboards">
 				<div id="player-gameboard"></div>
 				<div id="opponent-gameboard"></div>

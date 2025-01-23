@@ -56,10 +56,6 @@ export class Gameboard {
 		return Array.from(this.prevShoots.keys());
 	}
 
-	hasBeenHit(coords) {
-		return;
-	}
-
 	getCoordinates(coordinates) {
 		const string = coordinates.toString();
 		return this.board.get(string) || null;
