@@ -29,6 +29,7 @@ startPlacingBtn.addEventListener("click", () => {
 	handlePlaceShip();
 });
 
+// TODO: Create a place ship system
 async function handlePlaceShip() {
 	const ships = createShips();
 	const coordInput = coordsContainer.querySelector("#coord-input");
@@ -49,10 +50,13 @@ async function handlePlaceShip() {
 		coordInput.value = "";
 
 		function handleCoordInput() {
-			const coord = validateCoordinate(coordInput.value);
+			const coordResult = validateCoordinate(
+				coordInput.value,
+				ship.length
+			);
 
-			if (coord) {
-				const transformedCoords = transformCoordinates(coord);
+			if (coordResult) {
+				const transformedCoords = transformCoordinates(coordResult);
 
 				coordinates.push(transformedCoords);
 				coordinateCount++;
@@ -73,7 +77,7 @@ async function handlePlaceShip() {
 					console.log("Keep writing your ship's coordinate:");
 				}
 			} else {
-				alert("INVALID BRO");
+				alert(coordResult);
 				coordInput.value = "";
 			}
 		}
@@ -87,12 +91,46 @@ async function handlePlaceShip() {
 	console.log("YOU'RE PREPARE TO WAR!");
 }
 
+// TODO: transform coordinates A1 to [0,0]
 function transformCoordinates(coords) {
 	return coords;
 }
 
-function validateCoordinate(coordinate) {
-	return coordinate;
+function validateCoordinate(coordinates, mustLength) {
+	if (!coordinates) {
+		return false;
+	}
+
+	if (typeof coordinates != "string") {
+		return false;
+	}
+
+	if (coordinates.includes(",")) {
+		const splittedCoords = coordinates
+			.split(",")
+			.filter((item) => item != "");
+
+		if (splittedCoords.length != mustLength) {
+			return false;
+		}
+
+		const areCoordsValid = splittedCoords.every((coord) =>
+			validateSingleCoord(coord)
+		);
+
+		return areCoordsValid;
+	} else {
+		if (mustLength > 1 || !validateSingleCoord(coordinates)) {
+			return false;
+		}
+	}
+
+	return true;
+
+	function validateSingleCoord(coord) {
+		const singleCoordRegex = /^[a-j](?:[1-9]|10)$/i;
+		return singleCoordRegex.test(coord);
+	}
 }
 
 // TODO: START GAME FUNCTION
@@ -100,33 +138,6 @@ function validateCoordinate(coordinate) {
 const domHandler = new DOMHandler();
 domHandler.createGameboards();
 domHandler.displayShips(player2.name, player2.gameboard.board);
-
-// TODO: Create a place ship system
-
-// let attempts = 4;
-// const shipCoordinates = [];
-// coordsForm.addEventListener("submit", (e) => {
-// 	e.preventDefault();
-
-// 	const coordInput = coordsForm.querySelector("#coord-input");
-
-// 	if (coordInput.value == "") {
-// 		alert("Write a coordinate");
-// 		return;
-// 	}
-
-// 	const coord = Array.from(coordInput.value.split(",").map(Number));
-// 	shipCoordinates.push(coord);
-
-// 	coordInput.value = "";
-// 	attempts--;
-// 	if (attempts == 0) {
-// 		const ship = new Ship(4);
-// 		handlePlaceShip(ship, shipCoordinates);
-// 		domHandler.displayShips(player1.name, player1.gameboard.board);
-// 		coordInput.value = "";
-// 	}
-// });
 
 function startGame() {}
 
