@@ -12,7 +12,7 @@ export class DOMHandler {
 				// Create single board cell
 				const boardCell = document.createElement("div");
 				boardCell.classList.add("board-cell");
-				boardCell.dataset.coords = row + "-" + col;
+				boardCell.dataset.coords = col + "-" + row;
 
 				// copy cell to append it to the opponent board
 				const boardCell2 = boardCell.cloneNode(true);
