@@ -12,9 +12,12 @@ let winner;
 const player1 = new Player("P1", new Gameboard());
 const player2 = new Player("P2", new Gameboard());
 
+const domHandler = new DOMHandler();
+domHandler.createGameboards();
+
 function createShips() {
 	// const SHIPLENGTHS = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1];
-	const SHIPLENGTHS = [3];
+	const SHIPLENGTHS = [3, 2];
 	const ships = [];
 
 	for (let i in SHIPLENGTHS) {
@@ -26,11 +29,10 @@ function createShips() {
 }
 
 startPlacingBtn.addEventListener("click", () => {
-	handlePlaceShip();
+	handlePlaceShip(player1);
 });
 
-// TODO: Create a place ship system
-async function handlePlaceShip() {
+async function handlePlaceShip(player) {
 	const ships = createShips();
 	const coordInput = coordsContainer.querySelector("#coord-input");
 	const coordSubmitBtn = coordsContainer.querySelector("#coord-submit");
@@ -39,10 +41,10 @@ async function handlePlaceShip() {
 		console.log("Write your ship coordinates: (e.g: A1,A2...");
 		console.log("Ship length: " + ship.length);
 
-		const coordinates = [];
-		let coordinateCount = 0;
+		let shipsCount = 0;
 		let resolveCoordinates;
 
+		// Create promise for async input
 		const coordinatePromise = new Promise((resolve) => {
 			resolveCoordinates = resolve;
 		});
@@ -53,29 +55,27 @@ async function handlePlaceShip() {
 				ship.length
 			);
 
+			// If coordinate is correct, place ship
 			if (coordResult) {
-				console.log(coordInput.value);
-
 				const transformedCoords = transformCoordinates(
 					coordInput.value
 				);
 
-				coordinates.push(transformedCoords);
-				coordinateCount++;
+				shipsCount++;
 				coordInput.value = "";
 
-				if (coordinateCount === ships.length) {
-					resolveCoordinates(coordinates);
+				// Place ship and continue placement
+				player.gameboard.placeShip(ship, transformedCoords);
+				domHandler.displayShips(player1.name, player1.gameboard.board);
+				resolveCoordinates(transformedCoords);
 
-					// Place ship in player's gameboard
-					// player.gameboard.placeShip(ship, coordinates);
+				// Remove event listener and avoid creating several ones
+				coordSubmitBtn.removeEventListener("click", handleCoordInput);
 
-					coordSubmitBtn.removeEventListener(
-						"click",
-						handleCoordInput
-					);
-				} else {
-					console.log("Keep writing your ship's coordinate:");
+				// If there are ships left, log message
+				if (!shipsCount === ships.length) {
+					console.log("Keep writing your ships' coordinates:");
+					console.log("Next Ship length: " + ship.length);
 				}
 			} else {
 				alert(
@@ -84,11 +84,10 @@ async function handlePlaceShip() {
 				coordInput.value = "";
 			}
 		}
-
 		coordSubmitBtn.addEventListener("click", handleCoordInput);
-		await coordinatePromise;
 
-		console.log(coordinates);
+		// Wait until the current ship is placed
+		await coordinatePromise;
 	}
 
 	console.log("YOU'RE PREPARE TO WAR!");
@@ -155,10 +154,6 @@ function validateCoordinate(coordinates, mustLength) {
 }
 
 // TODO: START GAME FUNCTION
-
-const domHandler = new DOMHandler();
-domHandler.createGameboards();
-domHandler.displayShips(player1.name, player1.gameboard.board);
 
 function startGame() {}
 
