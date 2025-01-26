@@ -14,7 +14,7 @@ const player2 = new Player("P2", new Gameboard());
 
 function createShips() {
 	// const SHIPLENGTHS = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1];
-	const SHIPLENGTHS = [2];
+	const SHIPLENGTHS = [3];
 	const ships = [];
 
 	for (let i in SHIPLENGTHS) {
@@ -47,8 +47,6 @@ async function handlePlaceShip() {
 			resolveCoordinates = resolve;
 		});
 
-		coordInput.value = "";
-
 		function handleCoordInput() {
 			const coordResult = validateCoordinate(
 				coordInput.value,
@@ -56,7 +54,11 @@ async function handlePlaceShip() {
 			);
 
 			if (coordResult) {
-				const transformedCoords = transformCoordinates(coordResult);
+				console.log(coordInput.value);
+
+				const transformedCoords = transformCoordinates(
+					coordInput.value
+				);
 
 				coordinates.push(transformedCoords);
 				coordinateCount++;
@@ -64,7 +66,6 @@ async function handlePlaceShip() {
 
 				if (coordinateCount === ships.length) {
 					resolveCoordinates(coordinates);
-					console.log("PLACIIINGGG SHIIIIIP");
 
 					// Place ship in player's gameboard
 					// player.gameboard.placeShip(ship, coordinates);
@@ -77,7 +78,9 @@ async function handlePlaceShip() {
 					console.log("Keep writing your ship's coordinate:");
 				}
 			} else {
-				alert(coordResult);
+				alert(
+					"Invalid coordinate format.  Please use a letter A-J followed by a number 1-10 (e.g., B5)"
+				);
 				coordInput.value = "";
 			}
 		}
@@ -91,9 +94,27 @@ async function handlePlaceShip() {
 	console.log("YOU'RE PREPARE TO WAR!");
 }
 
-// TODO: transform coordinates A1 to [0,0]
 function transformCoordinates(coords) {
-	return coords;
+	if (coords.includes(",")) {
+		const coordElements = coords.split(",");
+		const coordinates = [];
+
+		for (let coord of coordElements) {
+			const formmatedCoord = transformSingleCoord(coord);
+			coordinates.push(formmatedCoord);
+		}
+
+		return coordinates;
+	} else {
+		return [transformSingleCoord(coords)];
+	}
+
+	function transformSingleCoord(coordinate) {
+		const x = coordinate[0].toUpperCase().charCodeAt(0) - 65;
+		const y = parseInt(coordinate.slice(1)) - 1;
+
+		return [x, y];
+	}
 }
 
 function validateCoordinate(coordinates, mustLength) {
@@ -137,7 +158,7 @@ function validateCoordinate(coordinates, mustLength) {
 
 const domHandler = new DOMHandler();
 domHandler.createGameboards();
-domHandler.displayShips(player2.name, player2.gameboard.board);
+domHandler.displayShips(player1.name, player1.gameboard.board);
 
 function startGame() {}
 
