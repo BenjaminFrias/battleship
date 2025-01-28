@@ -15,6 +15,11 @@ const player2 = new Player("P2", new Gameboard());
 const domHandler = new DOMHandler();
 domHandler.createGameboards();
 
+// TODO: REFACTOR: move board-related-functions to gameboard module
+// TODO: Create function for let users place their ships in order, first P1 and then P2
+// TODO: Create main game function, for create players and boards, ship placement, war and transition functionality and winning.
+// TODO: Create restart game function for creating a DOM method for removing elements.
+
 function createShips() {
 	// const SHIPLENGTHS = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1];
 	const SHIPLENGTHS = [3, 2];
@@ -50,14 +55,14 @@ async function handlePlaceShip(player) {
 		});
 
 		function handleCoordInput() {
-			const coordResult = validateCoordinate(
+			const coordResult = player.gameboard.validateCoordinates(
 				coordInput.value,
 				ship.length
 			);
 
 			// If coordinate is correct, place ship
 			if (coordResult) {
-				const transformedCoords = transformCoordinates(
+				const transformedCoords = player.gameboard.transformCoordinates(
 					coordInput.value
 				);
 
@@ -72,7 +77,7 @@ async function handlePlaceShip(player) {
 				// Remove event listener and avoid creating several ones
 				coordSubmitBtn.removeEventListener("click", handleCoordInput);
 
-				// If there are ships left, log message
+				// If there are ships left, continue and log message
 				if (!shipsCount === ships.length) {
 					console.log("Keep writing your ships' coordinates:");
 					console.log("Next Ship length: " + ship.length);
@@ -91,66 +96,6 @@ async function handlePlaceShip(player) {
 	}
 
 	console.log("YOU'RE PREPARE TO WAR!");
-}
-
-function transformCoordinates(coords) {
-	if (coords.includes(",")) {
-		const coordElements = coords.split(",");
-		const coordinates = [];
-
-		for (let coord of coordElements) {
-			const formmatedCoord = transformSingleCoord(coord);
-			coordinates.push(formmatedCoord);
-		}
-
-		return coordinates;
-	} else {
-		return [transformSingleCoord(coords)];
-	}
-
-	function transformSingleCoord(coordinate) {
-		const x = coordinate[0].toUpperCase().charCodeAt(0) - 65;
-		const y = parseInt(coordinate.slice(1)) - 1;
-
-		return [x, y];
-	}
-}
-
-function validateCoordinate(coordinates, mustLength) {
-	if (!coordinates) {
-		return false;
-	}
-
-	if (typeof coordinates != "string") {
-		return false;
-	}
-
-	if (coordinates.includes(",")) {
-		const splittedCoords = coordinates
-			.split(",")
-			.filter((item) => item != "");
-
-		if (splittedCoords.length != mustLength) {
-			return false;
-		}
-
-		const areCoordsValid = splittedCoords.every((coord) =>
-			validateSingleCoord(coord)
-		);
-
-		return areCoordsValid;
-	} else {
-		if (mustLength > 1 || !validateSingleCoord(coordinates)) {
-			return false;
-		}
-	}
-
-	return true;
-
-	function validateSingleCoord(coord) {
-		const singleCoordRegex = /^[a-j](?:[1-9]|10)$/i;
-		return singleCoordRegex.test(coord);
-	}
 }
 
 // TODO: START GAME FUNCTION

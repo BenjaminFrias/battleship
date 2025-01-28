@@ -48,6 +48,66 @@ export class Gameboard {
 		return null;
 	}
 
+	validateCoordinates(coordinates, mustLength) {
+		if (!coordinates) {
+			return false;
+		}
+
+		if (typeof coordinates != "string") {
+			return false;
+		}
+
+		if (coordinates.includes(",")) {
+			const splittedCoords = coordinates
+				.split(",")
+				.filter((item) => item != "");
+
+			if (splittedCoords.length != mustLength) {
+				return false;
+			}
+
+			const areCoordsValid = splittedCoords.every((coord) =>
+				validateSingleCoord(coord)
+			);
+
+			return areCoordsValid;
+		} else {
+			if (mustLength > 1 || !validateSingleCoord(coordinates)) {
+				return false;
+			}
+		}
+
+		return true;
+
+		function validateSingleCoord(coord) {
+			const singleCoordRegex = /^[a-j](?:[1-9]|10)$/i;
+			return singleCoordRegex.test(coord);
+		}
+	}
+
+	transformCoordinates(coords) {
+		if (coords.includes(",")) {
+			const coordElements = coords.split(",");
+			const coordinates = [];
+
+			for (let coord of coordElements) {
+				const formmatedCoord = transformSingleCoord(coord);
+				coordinates.push(formmatedCoord);
+			}
+
+			return coordinates;
+		} else {
+			return [transformSingleCoord(coords)];
+		}
+
+		function transformSingleCoord(coordinate) {
+			const x = coordinate[0].toUpperCase().charCodeAt(0) - 65;
+			const y = parseInt(coordinate.slice(1)) - 1;
+
+			return [x, y];
+		}
+	}
+
 	areAllShipsSunk() {
 		return this.ships.every((obj) => obj.ship.isDestroyed);
 	}
