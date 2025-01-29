@@ -13,6 +13,10 @@ export class DOMHandler {
 		this.opponentGameboard = document.createElement("div");
 		this.opponentGameboard.id = "opponent-gameboard";
 
+		// Hide players gameboard
+		this.playerGameboard.classList.add("hide");
+		this.opponentGameboard.classList.add("hide");
+
 		this.gameboardContainer.appendChild(this.playerGameboard);
 		this.gameboardContainer.appendChild(this.opponentGameboard);
 
@@ -34,6 +38,16 @@ export class DOMHandler {
 				this.playerGameboard.appendChild(boardCell);
 				this.opponentGameboard.appendChild(boardCell2);
 			}
+		}
+	}
+
+	showGameboard(playerName) {
+		if (playerName == "P1") {
+			this.playerGameboard.classList.remove("hide");
+			this.opponentGameboard.classList.add("hide");
+		} else {
+			this.opponentGameboard.classList.remove("hide");
+			this.playerGameboard.classList.add("hide");
 		}
 	}
 
@@ -65,5 +79,13 @@ export class DOMHandler {
 				}
 			});
 		}
+	}
+
+	hideElement(element) {
+		element.classList.add("hide");
+	}
+
+	showElement(element) {
+		element.classList.remove("hide");
 	}
 }
