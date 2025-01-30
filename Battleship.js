@@ -64,16 +64,21 @@ function startGame() {
 		handlePlaceShip(currentPlayer).then(() => {
 			if (currentPlayer == player2) {
 				// Move previous player's board to gameboard Container
-				gameboardsContainer.appendChild(
-					currentPlayer.gameboard.boardElement
+				// TODO: Create move board function to use it in attack phase
+
+				moveBoard(
+					currentPlayer.gameboard.boardElement,
+					gameboardsContainer
 				);
 
 				updatePhaseTitle("Let's battle!");
 				startBattlePhase();
 			} else {
 				// Move previous player's board to gameboard Container
-				gameboardsContainer.appendChild(
-					currentPlayer.gameboard.boardElement
+
+				moveBoard(
+					currentPlayer.gameboard.boardElement,
+					gameboardsContainer
 				);
 
 				// Swap turns when first player finished placing its ships.
@@ -82,15 +87,17 @@ function startGame() {
 				updatePhaseTitle(`${currentPlayer.name}, place your ships`);
 
 				// Show current player's board by moving it to
-				currentPlaceGameboard.appendChild(
-					currentPlayer.gameboard.boardElement
+
+				moveBoard(
+					currentPlayer.gameboard.boardElement,
+					currentPlaceGameboard
 				);
 
 				domHandler.showPage(placeShipsPage);
 			}
 		});
 
-		currentPlaceGameboard.appendChild(currentPlayer.gameboard.boardElement);
+		moveBoard(currentPlayer.gameboard.boardElement, currentPlaceGameboard);
 
 		domHandler.showPage(setCoordsPage);
 	}
@@ -99,6 +106,10 @@ function startGame() {
 		// Show both boards
 		domHandler.showElement(playerBoard1);
 		domHandler.showElement(playerBoard2);
+	}
+
+	function moveBoard(board, container) {
+		container.appendChild(board);
 	}
 
 	function updatePhaseTitle(message) {
