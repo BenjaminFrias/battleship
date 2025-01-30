@@ -4,11 +4,12 @@ import { Player } from "./Player.js";
 import { DOMHandler } from "./DOMHandler.js";
 
 const startGamePage = document.querySelector("#start-game-page");
-const placeShipsPage = document.querySelector("#place-ships-page");
-const coordinatesPage = document.querySelector("#get-coordinates-page");
+const placeShipsPage = document.querySelector("#start-placing-page");
+const setCoordsPage = document.querySelector("#set-coordinates-page");
 const battlePage = document.querySelector("#battle-page");
 const winnerPage = document.querySelector("#winner-page");
 const coordsContainer = document.querySelector("#coordinates-input-container");
+const gameboardsContainer = document.querySelector("#gameboards");
 const startGameBtn = document.querySelector("#start-game-btn");
 const phaseTitle = document.querySelector("#current-phase-title");
 
@@ -30,8 +31,7 @@ function startGame() {
 	domHandler = new DOMHandler();
 
 	// Switch start game to placement page
-	domHandler.hideElement(startGamePage);
-	domHandler.showElement(placeShipsPage);
+	domHandler.showPage(placeShipsPage);
 	domHandler.createGameboards();
 
 	// Creating players
@@ -39,49 +39,71 @@ function startGame() {
 	player2 = new Player("P2", new Gameboard());
 	currentPlayer = player1;
 
+	const playerBoard1 = document.querySelector("#player-gameboard");
+	const playerBoard2 = document.querySelector("#opponent-gameboard");
+
+	player1.gameboard.boardElement = playerBoard1;
+	player2.gameboard.boardElement = playerBoard2;
+
 	domHandler.showElement(phaseTitle);
+	updatePhaseTitle("Start placement phase!");
 
 	// Add event listener to start placing btn
 	const startPlacingBtn = document.querySelector("#start-placing-btn");
 	startPlacingBtn.addEventListener("click", () => {
-		phaseTitle.textContent = `${currentPlayer.name}, place your ships`;
+		startPlacingPhase();
+	});
+
+	function startPlacingPhase() {
+		const currentPlaceGameboard = document.querySelector(
+			"#current-placing-gameboard"
+		);
+
+		updatePhaseTitle(`${currentPlayer.name}, place your ships`);
 
 		handlePlaceShip(currentPlayer).then(() => {
 			if (currentPlayer == player2) {
-				phaseTitle.textContent = "Let's battle!";
-				const playerBoard1 =
-					document.querySelector("#player-gameboard");
-				const playerBoard2 = document.querySelector(
-					"#opponent-gameboard"
+				// Move previous player's board to gameboard Container
+				gameboardsContainer.appendChild(
+					currentPlayer.gameboard.boardElement
 				);
 
-				// Show both boards
-				domHandler.showElement(playerBoard1);
-				domHandler.showElement(playerBoard2);
+				updatePhaseTitle("Let's battle!");
+				startBattlePhase();
 			} else {
+				// Move previous player's board to gameboard Container
+				gameboardsContainer.appendChild(
+					currentPlayer.gameboard.boardElement
+				);
+
 				// Swap turns when first player finished placing its ships.
 				swapTurns();
 
-				phaseTitle.textContent = `${currentPlayer.name}, place your ships`;
-				domHandler.showElement(startPlacingBtn);
-				domHandler.hideElement(coordsContainer);
-				domHandler.hideElement(gameboardsContainer);
+				updatePhaseTitle(`${currentPlayer.name}, place your ships`);
+
+				// Show current player's board by moving it to
+				currentPlaceGameboard.appendChild(
+					currentPlayer.gameboard.boardElement
+				);
+
+				domHandler.showPage(placeShipsPage);
 			}
 		});
 
-		// Show gameboards
-		const gameboardsContainer = document.querySelector("#gameboards");
-		domHandler.showElement(gameboardsContainer);
+		currentPlaceGameboard.appendChild(currentPlayer.gameboard.boardElement);
 
-		// Show only the current player gameboard
-		domHandler.showGameboard(currentPlayer.name);
+		domHandler.showPage(setCoordsPage);
+	}
 
-		// Show coordinates inputs
-		domHandler.showElement(coordsContainer);
+	function startBattlePhase() {
+		// Show both boards
+		domHandler.showElement(playerBoard1);
+		domHandler.showElement(playerBoard2);
+	}
 
-		// Hide start placing btn
-		domHandler.hideElement(startPlacingBtn);
-	});
+	function updatePhaseTitle(message) {
+		phaseTitle.textContent = message;
+	}
 }
 
 async function handlePlaceShip(player) {
@@ -145,7 +167,7 @@ async function handlePlaceShip(player) {
 
 function createShips() {
 	// const SHIPLENGTHS = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1];
-	const SHIPLENGTHS = [2, 1];
+	const SHIPLENGTHS = [2];
 	const ships = [];
 
 	for (let i in SHIPLENGTHS) {

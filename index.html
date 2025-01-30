@@ -11,31 +11,40 @@
 			<nav>
 				<h1 id="game-title">Battleship</h1>
 			</nav>
-			<h2 id="current-phase-title" class="hide">Placement phase</h2>
-			<div id="start-game-page">
-				<button id="start-game-btn">Start game</button>
-			</div>
 
-			<!-- Placement page -->
-			<div id="place-ships-page" class="hide">
-				<button id="start-placing-btn">Place ships</button>
-				<div class="current-placing-gameboard"></div>
-				<div id="coordinates-input-container" class="hide">
-					<input
-						type="text"
-						name="coordinate"
-						id="coord-input"
-						placeholder="Enter coordinate: "
-					/>
-					<button id="coord-submit">Set coordinate</button>
+			<div id="main-game-container">
+				<h2 id="current-phase-title" class="hide"></h2>
+
+				<div id="start-game-page" class="page">
+					<button id="start-game-btn">Start game</button>
 				</div>
+
+				<!-- Placement pages -->
+				<div id="start-placing-page" class="page hide">
+					<button id="start-placing-btn">Place ships</button>
+				</div>
+
+				<div id="set-coordinates-page" class="page hide">
+					<div id="coordinates-input-container">
+						<input
+							type="text"
+							name="coordinate"
+							id="coord-input"
+							placeholder="Enter coordinate: "
+						/>
+						<button id="coord-submit">Set coordinate</button>
+					</div>
+					<div id="current-placing-gameboard"></div>
+				</div>
+
+				<!-- Gameboards -->
+				<div id="battle-page">
+					<div id="gameboards" class="page hide"></div>
+				</div>
+
+				<!-- Winner and Restart page -->
+				<div id="winner-page" class="page hide"></div>
 			</div>
-
-			<!-- Gameboards -->
-			<div id="gameboards" class="hide"></div>
-
-			<!-- Winner and Restart page -->
-			<div id="winner-page" class="hide"></div>
 		</div>
 
 		<script type="module" src="./Battleship.js"></script>

@@ -2,6 +2,7 @@ export class DOMHandler {
 	constructor() {
 		this.GRIDSIZE = 10;
 		this.gameboardContainer = document.querySelector("#gameboards");
+		this.pages = document.querySelectorAll("div.page");
 		this.cells = [];
 	}
 
@@ -12,10 +13,6 @@ export class DOMHandler {
 
 		this.opponentGameboard = document.createElement("div");
 		this.opponentGameboard.id = "opponent-gameboard";
-
-		// Hide players gameboard
-		this.playerGameboard.classList.add("hide");
-		this.opponentGameboard.classList.add("hide");
 
 		this.gameboardContainer.appendChild(this.playerGameboard);
 		this.gameboardContainer.appendChild(this.opponentGameboard);
@@ -78,6 +75,16 @@ export class DOMHandler {
 					cell.classList.add("ship");
 				}
 			});
+		}
+	}
+
+	showPage(pageToShow) {
+		for (let page of this.pages) {
+			if (page === pageToShow) {
+				this.showElement(pageToShow);
+			} else {
+				this.hideElement(page);
+			}
 		}
 	}
 
