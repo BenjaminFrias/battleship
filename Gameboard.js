@@ -19,6 +19,19 @@ export class Gameboard {
 		this.ships.push({ ship: ship, coords: shipCoords });
 	}
 
+	destroyShip(player, board, ship) {
+		ship.isDestroyed = true;
+
+		const coordinates = player.gameboard.getShipCoordinates(ship);
+		for (let coord of coordinates) {
+			const cell = document.querySelector(
+				`#${board} > .board-cell[data-coords="${coord.join("-")}"]`
+			);
+
+			cell.classList.add("destroyed");
+		}
+	}
+
 	receiveAttack(coordinates) {
 		const coordString = coordinates.toString();
 

@@ -23,6 +23,7 @@ const returnHomeBtn = document.querySelector("#return-home-btn");
 // TODO: REFACTOR: Try to move every gameboard function to gameboard
 
 // TODO: START GAME FUNCTION
+
 let domHandler;
 let player1;
 let player2;
@@ -169,6 +170,11 @@ function startGame() {
 	function updatePhaseTitle(message) {
 		phaseTitle.textContent = message;
 	}
+
+	function swapTurns() {
+		currentPlayer = currentPlayer == player1 ? player2 : player1;
+		currentOpponent = currentPlayer == player2 ? player1 : player2;
+	}
 }
 
 async function handlePlaceShip(player) {
@@ -264,7 +270,7 @@ function handleAttack(cell) {
 
 	if (attackResult instanceof Ship) {
 		if (attackResult.isSunk()) {
-			destroyShip(player, clickedBoard, attackResult);
+			player.gameboard.destroyShip(player, clickedBoard, attackResult);
 			const isGameOver = player.gameboard.areAllShipsSunk();
 
 			if (isGameOver) {
@@ -280,22 +286,4 @@ function handleAttack(cell) {
 	} else if (attackResult == "prevShoot") {
 		return "prevShoot";
 	}
-}
-
-function destroyShip(player, board, ship) {
-	ship.isDestroyed = true;
-
-	const coordinates = player.gameboard.getShipCoordinates(ship);
-	for (let coord of coordinates) {
-		const cell = document.querySelector(
-			`#${board} > .board-cell[data-coords="${coord.join("-")}"]`
-		);
-
-		cell.classList.add("destroyed");
-	}
-}
-
-function swapTurns() {
-	currentPlayer = currentPlayer == player1 ? player2 : player1;
-	currentOpponent = currentPlayer == player2 ? player1 : player2;
 }
