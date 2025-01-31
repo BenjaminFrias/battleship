@@ -1,7 +1,7 @@
 export class DOMHandler {
 	constructor() {
 		this.GRIDSIZE = 10;
-		this.gameboardContainer = document.querySelector("#gameboards");
+		this.gameboardContainer = document.querySelector("#gameboard");
 		this.pages = document.querySelectorAll("div.page");
 		this.cells = [];
 	}
@@ -48,13 +48,13 @@ export class DOMHandler {
 		}
 	}
 
-	displayShips(player, board) {
+	toggleShips(playerName, board, action) {
 		let cells;
-		if (player === "P1") {
+		if (playerName === "P1") {
 			cells = document.querySelectorAll(
 				".container #player-gameboard > .board-cell"
 			);
-		} else if (player === "P2") {
+		} else if (playerName === "P2") {
 			cells = document.querySelectorAll(
 				".container #opponent-gameboard > .board-cell"
 			);
@@ -72,7 +72,11 @@ export class DOMHandler {
 					cell.dataset.coords ==
 					`${currentCoords[0]}-${currentCoords[1]}`
 				) {
-					cell.classList.add("ship");
+					if (action == "add") {
+						cell.classList.add("ship");
+					} else {
+						cell.classList.remove("ship");
+					}
 				}
 			});
 		}

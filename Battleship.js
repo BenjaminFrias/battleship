@@ -9,7 +9,9 @@ const setCoordsPage = document.querySelector("#set-coordinates-page");
 const battlePage = document.querySelector("#battle-page");
 const winnerPage = document.querySelector("#winner-page");
 const coordsContainer = document.querySelector("#coordinates-input-container");
-const gameboardsContainer = document.querySelector("#gameboards");
+const gameboardsContainer = document.querySelector("#gameboard");
+const passDevicePage = document.querySelector("#pass-device-page");
+const passDeviceBtn = document.querySelector("#pass-btn");
 const startGameBtn = document.querySelector("#start-game-btn");
 const phaseTitle = document.querySelector("#current-phase-title");
 
@@ -23,6 +25,7 @@ let domHandler;
 let player1;
 let player2;
 let currentPlayer;
+let currentOpponent;
 
 startGameBtn.addEventListener("click", startGame);
 
@@ -38,6 +41,7 @@ function startGame() {
 	player1 = new Player("P1", new Gameboard());
 	player2 = new Player("P2", new Gameboard());
 	currentPlayer = player1;
+	currentOpponent = player2;
 
 	const playerBoard1 = document.querySelector("#player-gameboard");
 	const playerBoard2 = document.querySelector("#opponent-gameboard");
@@ -64,7 +68,6 @@ function startGame() {
 		handlePlaceShip(currentPlayer).then(() => {
 			if (currentPlayer == player2) {
 				// Move previous player's board to gameboard Container
-				// TODO: Create move board function to use it in attack phase
 
 				moveBoard(
 					currentPlayer.gameboard.boardElement,
@@ -72,6 +75,7 @@ function startGame() {
 				);
 
 				updatePhaseTitle("Let's battle!");
+				swapTurns();
 				startBattlePhase();
 			} else {
 				// Move previous player's board to gameboard Container
@@ -102,10 +106,49 @@ function startGame() {
 		domHandler.showPage(setCoordsPage);
 	}
 
+	// TODO: ATTACK Phase, move boards to current player and opponent board and create switch page
 	function startBattlePhase() {
-		// Show both boards
-		domHandler.showElement(playerBoard1);
-		domHandler.showElement(playerBoard2);
+		updatePhaseTitle(`Let's battle! It's ${currentPlayer.name}'s turn`);
+
+		domHandler.showPage(passDevicePage);
+
+		// Remove all ships classes from boards
+		domHandler.toggleShips(
+			currentOpponent.name,
+			currentOpponent.gameboard.board,
+			"remove"
+		);
+
+		domHandler.toggleShips(
+			currentPlayer.name,
+			currentPlayer.gameboard.board,
+			"remove"
+		);
+
+		passDeviceBtn.addEventListener("click", () => {
+			domHandler.showGameboard(currentOpponent.name);
+			domHandler.showPage(battlePage);
+		});
+
+		// handle attack for every cell
+		const cells = document.querySelectorAll(".board-cell");
+		cells.forEach((cell) => {
+			cell.addEventListener("click", () => {
+				const result = handleAttack(cell);
+
+				if (result == "miss") {
+					swapTurns();
+					updatePhaseTitle(
+						`Let's battle! It's ${currentPlayer.name}'s turn`
+					);
+					domHandler.showPage(passDevicePage);
+				} else if (result == "gameOver") {
+					gameOver();
+				} else if (result == "prevShoot") {
+					alert("You attacked that cell already");
+				}
+			});
+		});
 	}
 
 	function moveBoard(board, container) {
@@ -151,7 +194,11 @@ async function handlePlaceShip(player) {
 
 				// Place ship and continue placement
 				player.gameboard.placeShip(ship, transformedCoords);
-				domHandler.displayShips(player.name, player.gameboard.board);
+				domHandler.toggleShips(
+					player.name,
+					player.gameboard.board,
+					"add"
+				);
 				resolveCoordinates(transformedCoords);
 
 				// Remove event listener and avoid creating several ones
@@ -178,7 +225,7 @@ async function handlePlaceShip(player) {
 
 function createShips() {
 	// const SHIPLENGTHS = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1];
-	const SHIPLENGTHS = [2];
+	const SHIPLENGTHS = [1];
 	const ships = [];
 
 	for (let i in SHIPLENGTHS) {
@@ -210,25 +257,19 @@ function handleAttack(cell) {
 			const isGameOver = player.gameboard.areAllShipsSunk();
 
 			if (isGameOver) {
-				gameOver();
+				return "gameOver";
 			}
 		}
 
 		cell.classList.add("hit");
+		return "hit";
 	} else if (attackResult == "miss") {
-		swapTurns();
 		cell.classList.add("miss");
+		return "miss";
 	} else if (attackResult == "prevShoot") {
-		console.log("Coordinate already attacked");
+		return "prevShoot";
 	}
 }
-
-const cells = document.querySelectorAll(".board-cell");
-cells.forEach((cell) => {
-	cell.addEventListener("click", () => {
-		handleAttack(cell);
-	});
-});
 
 function destroyShip(player, board, ship) {
 	ship.isDestroyed = true;
@@ -245,6 +286,7 @@ function destroyShip(player, board, ship) {
 
 function swapTurns() {
 	currentPlayer = currentPlayer == player1 ? player2 : player1;
+	currentOpponent = currentPlayer == player2 ? player1 : player2;
 }
 
 function gameOver() {
