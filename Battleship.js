@@ -14,6 +14,8 @@ const passDevicePage = document.querySelector("#pass-device-page");
 const passDeviceBtn = document.querySelector("#pass-btn");
 const startGameBtn = document.querySelector("#start-game-btn");
 const phaseTitle = document.querySelector("#current-phase-title");
+const restartGameBtn = document.querySelector("#restart-game-btn");
+const returnHomeBtn = document.querySelector("#return-home-btn");
 
 // TODO: Create main game function, for create players and boards, ship placement, war and transition functionality and winning.
 // TODO: Create restart game function for creating a DOM method for removing elements.
@@ -27,7 +29,10 @@ let player2;
 let currentPlayer;
 let currentOpponent;
 
-startGameBtn.addEventListener("click", startGame);
+startGameBtn.addEventListener("click", () => {
+	// TODO: restore global variables
+	startGame();
+});
 
 function startGame() {
 	// Creating Dom handler
@@ -106,7 +111,6 @@ function startGame() {
 		domHandler.showPage(setCoordsPage);
 	}
 
-	// TODO: ATTACK Phase, move boards to current player and opponent board and create switch page
 	function startBattlePhase() {
 		updatePhaseTitle(`Let's battle! It's ${currentPlayer.name}'s turn`);
 
@@ -149,6 +153,13 @@ function startGame() {
 				}
 			});
 		});
+	}
+
+	function gameOver() {
+		const winner = currentPlayer;
+		const winnerTitle = document.querySelector("#winner-title");
+		winnerTitle.textContent = `${winner.name} won!`;
+		domHandler.showPage(winnerPage);
 	}
 
 	function moveBoard(board, container) {
@@ -287,8 +298,4 @@ function destroyShip(player, board, ship) {
 function swapTurns() {
 	currentPlayer = currentPlayer == player1 ? player2 : player1;
 	currentOpponent = currentPlayer == player2 ? player1 : player2;
-}
-
-function gameOver() {
-	alert(`${currentPlayer.name} won`);
 }
