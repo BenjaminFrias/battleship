@@ -16,26 +16,32 @@ const startGameBtn = document.querySelector("#start-game-btn");
 const phaseTitle = document.querySelector("#current-phase-title");
 const restartGameBtn = document.querySelector("#restart-game-btn");
 const returnHomeBtn = document.querySelector("#return-home-btn");
+const startPlacingBtn = document.querySelector("#start-placing-btn");
 
-// TODO: Create main game function, for create players and boards, ship placement, war and transition functionality and winning.
 // TODO: Create restart game function for creating a DOM method for removing elements.
 // TODO: Refactor validate coords to return different errors to show to the user
 // TODO: REFACTOR: Try to move every gameboard function to gameboard
-
-// TODO: START GAME FUNCTION
 
 let domHandler;
 let player1;
 let player2;
 let currentPlayer;
 let currentOpponent;
+let startPlacingListener;
 
 startGameBtn.addEventListener("click", () => {
-	// TODO: restore global variables
+	restartValues();
 	startGame();
 });
 
+returnHomeBtn.addEventListener("click", () => {
+	domHandler.showPage(startGamePage);
+});
+
 function startGame() {
+	// Remove boards elements
+	gameboardsContainer.textContent = "";
+
 	// Creating Dom handler
 	domHandler = new DOMHandler();
 
@@ -59,10 +65,8 @@ function startGame() {
 	updatePhaseTitle("Start placement phase!");
 
 	// Add event listener to start placing btn
-	const startPlacingBtn = document.querySelector("#start-placing-btn");
-	startPlacingBtn.addEventListener("click", () => {
-		startPlacingPhase();
-	});
+	startPlacingListener = startPlacingPhase;
+	startPlacingBtn.addEventListener("click", startPlacingListener);
 
 	function startPlacingPhase() {
 		const currentPlaceGameboard = document.querySelector(
@@ -130,10 +134,13 @@ function startGame() {
 			"remove"
 		);
 
-		passDeviceBtn.addEventListener("click", () => {
+		passDeviceBtn.addEventListener("click", passDevice);
+
+		function passDevice() {
+			updatePhaseTitle("Click a cell to attack!");
 			domHandler.showGameboard(currentOpponent.name);
 			domHandler.showPage(battlePage);
-		});
+		}
 
 		// handle attack for every cell
 		const cells = document.querySelectorAll(".board-cell");
@@ -157,6 +164,7 @@ function startGame() {
 	}
 
 	function gameOver() {
+		domHandler.hideElement(phaseTitle);
 		const winner = currentPlayer;
 		const winnerTitle = document.querySelector("#winner-title");
 		winnerTitle.textContent = `${winner.name} won!`;
@@ -183,6 +191,7 @@ async function handlePlaceShip(player) {
 	const coordSubmitBtn = coordsContainer.querySelector("#coord-submit");
 
 	for (let ship of ships) {
+		// TODO: show ship length when user place a new ship
 		console.log("Write your ship coordinates: (e.g: A1,A2...");
 		console.log("Ship length: " + ship.length);
 
@@ -207,7 +216,6 @@ async function handlePlaceShip(player) {
 				);
 
 				shipsCount++;
-				coordInput.value = "";
 
 				// Place ship and continue placement
 				player.gameboard.placeShip(ship, transformedCoords);
@@ -226,6 +234,7 @@ async function handlePlaceShip(player) {
 					console.log("Keep writing your ships' coordinates:");
 					console.log("Next Ship length: " + ship.length);
 				}
+				coordInput.value = "";
 			} else {
 				alert(
 					"Invalid coordinate format.  Please use a letter A-J followed by a number 1-10 (e.g., B5)"
@@ -252,8 +261,6 @@ function createShips() {
 
 	return ships;
 }
-
-// TODO: Create restart game function
 
 function handleAttack(cell) {
 	const coords = Array.from(cell.dataset.coords.split("-").map(Number));
@@ -286,4 +293,13 @@ function handleAttack(cell) {
 	} else if (attackResult == "prevShoot") {
 		return "prevShoot";
 	}
+}
+
+function restartValues() {
+	domHandler = undefined;
+	player1 = undefined;
+	player2 = undefined;
+	currentPlayer = undefined;
+	currentOpponent = undefined;
+	startPlacingBtn.removeEventListener("click", startPlacingListener);
 }
