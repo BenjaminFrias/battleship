@@ -13,11 +13,14 @@ const gameboardsContainer = document.querySelector("#gameboard");
 const passDevicePage = document.querySelector("#pass-device-page");
 const passDeviceBtn = document.querySelector("#pass-btn");
 const startGameBtn = document.querySelector("#start-game-btn");
-const phaseTitle = document.querySelector("#current-phase-title");
 const restartGameBtn = document.querySelector("#restart-game-btn");
 const returnHomeBtn = document.querySelector("#return-home-btn");
 const startPlacingBtn = document.querySelector("#start-placing-btn");
 const shipLengthTitle = document.querySelector("#ship-length");
+const startPlacingTitle = document.querySelector("#start-placing-title");
+const setCoordinatesTitle = document.querySelector("#set-coordinates-title");
+const passDeviceTitle = document.querySelector("#pass-device-title");
+const attackTitle = document.querySelector("#attack-title");
 
 // TODO: Refactor validate coords to return different errors to show to the user
 // TODO: REFACTOR: Try to move every gameboard function to gameboard
@@ -66,8 +69,10 @@ function startGame() {
 	player1.gameboard.boardElement = playerBoard1;
 	player2.gameboard.boardElement = playerBoard2;
 
-	domHandler.showElement(phaseTitle);
-	updatePhaseTitle("Start placement phase!");
+	updateTitle(
+		startPlacingTitle,
+		`${currentPlayer.name}, get your ships ready! `
+	);
 
 	// Add event listener to start placing btn
 	startPlacingListener = startPlacingPhase;
@@ -78,7 +83,10 @@ function startGame() {
 			"#current-placing-gameboard"
 		);
 
-		updatePhaseTitle(`${currentPlayer.name}, place your ships`);
+		updateTitle(
+			startPlacingTitle,
+			`${currentPlayer.name}, get your ships ready!`
+		);
 
 		handlePlaceShip(currentPlayer).then(() => {
 			if (currentPlayer == player2) {
@@ -89,7 +97,6 @@ function startGame() {
 					gameboardsContainer
 				);
 
-				updatePhaseTitle("Let's battle!");
 				swapTurns();
 				startBattlePhase();
 			} else {
@@ -103,7 +110,10 @@ function startGame() {
 				// Swap turns when first player finished placing its ships.
 				swapTurns();
 
-				updatePhaseTitle(`${currentPlayer.name}, place your ships`);
+				updateTitle(
+					startPlacingTitle,
+					`${currentPlayer.name}, get your ships ready!`
+				);
 
 				// Show current player's board by moving it to
 
@@ -118,11 +128,18 @@ function startGame() {
 
 		moveBoard(currentPlayer.gameboard.boardElement, currentPlaceGameboard);
 
+		updateTitle(
+			setCoordinatesTitle,
+			`${currentPlayer.name}, Enter your ship's coordinates.`
+		);
 		domHandler.showPage(setCoordsPage);
 	}
 
 	function startBattlePhase() {
-		updatePhaseTitle(`Let's battle! It's ${currentPlayer.name}'s turn`);
+		updateTitle(
+			passDeviceTitle,
+			`It's time for battle!, ${currentPlayer.name}`
+		);
 
 		domHandler.showPage(passDevicePage);
 
@@ -142,9 +159,11 @@ function startGame() {
 		passDeviceBtn.addEventListener("click", passDevice);
 
 		function passDevice() {
-			updatePhaseTitle(
+			updateTitle(
+				attackTitle,
 				`Click a cell to attack ${currentOpponent.name}'s board!`
 			);
+
 			domHandler.showGameboard(currentOpponent.name);
 			domHandler.showPage(battlePage);
 		}
@@ -157,8 +176,9 @@ function startGame() {
 
 				if (result == "miss") {
 					swapTurns();
-					updatePhaseTitle(
-						`Let's battle! It's ${currentPlayer.name}'s turn`
+					updateTitle(
+						passDeviceTitle,
+						`Attack!, ${currentPlayer.name}`
 					);
 					domHandler.showPage(passDevicePage);
 				} else if (result == "gameOver") {
@@ -171,7 +191,6 @@ function startGame() {
 	}
 
 	function gameOver() {
-		domHandler.hideElement(phaseTitle);
 		const winner = currentPlayer;
 		const winnerTitle = document.querySelector("#winner-title");
 		winnerTitle.textContent = `${winner.name} won!`;
@@ -182,8 +201,8 @@ function startGame() {
 		container.appendChild(board);
 	}
 
-	function updatePhaseTitle(message) {
-		phaseTitle.textContent = message;
+	function updateTitle(element, message) {
+		element.textContent = message;
 	}
 
 	function swapTurns() {
@@ -198,7 +217,7 @@ async function handlePlaceShip(player) {
 	const coordSubmitBtn = coordsContainer.querySelector("#coord-submit");
 
 	for (let ship of ships) {
-		shipLengthTitle.textContent = "Next Ship length: " + ship.length;
+		shipLengthTitle.textContent = "Ship length: " + ship.length;
 
 		let shipsCount = 0;
 		let resolveCoordinates;
