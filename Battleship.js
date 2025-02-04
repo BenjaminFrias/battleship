@@ -19,7 +19,6 @@ const returnHomeBtn = document.querySelector("#return-home-btn");
 const startPlacingBtn = document.querySelector("#start-placing-btn");
 const shipLengthTitle = document.querySelector("#ship-length");
 
-// TODO: Create restart game function for creating a DOM method for removing elements.
 // TODO: Refactor validate coords to return different errors to show to the user
 // TODO: REFACTOR: Try to move every gameboard function to gameboard
 
@@ -37,6 +36,11 @@ startGameBtn.addEventListener("click", () => {
 
 returnHomeBtn.addEventListener("click", () => {
 	domHandler.showPage(startGamePage);
+});
+
+restartGameBtn.addEventListener("click", () => {
+	restartValues();
+	startGame();
 });
 
 function startGame() {
