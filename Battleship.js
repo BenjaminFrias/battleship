@@ -142,7 +142,9 @@ function startGame() {
 		passDeviceBtn.addEventListener("click", passDevice);
 
 		function passDevice() {
-			updatePhaseTitle("Click a cell to attack!");
+			updatePhaseTitle(
+				`Click a cell to attack ${currentOpponent.name}'s board!`
+			);
 			domHandler.showGameboard(currentOpponent.name);
 			domHandler.showPage(battlePage);
 		}
