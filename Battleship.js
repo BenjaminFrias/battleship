@@ -17,6 +17,7 @@ const phaseTitle = document.querySelector("#current-phase-title");
 const restartGameBtn = document.querySelector("#restart-game-btn");
 const returnHomeBtn = document.querySelector("#return-home-btn");
 const startPlacingBtn = document.querySelector("#start-placing-btn");
+const shipLengthTitle = document.querySelector("#ship-length");
 
 // TODO: Create restart game function for creating a DOM method for removing elements.
 // TODO: Refactor validate coords to return different errors to show to the user
@@ -191,9 +192,7 @@ async function handlePlaceShip(player) {
 	const coordSubmitBtn = coordsContainer.querySelector("#coord-submit");
 
 	for (let ship of ships) {
-		// TODO: show ship length when user place a new ship
-		console.log("Write your ship coordinates: (e.g: A1,A2...");
-		console.log("Ship length: " + ship.length);
+		shipLengthTitle.textContent = "Next Ship length: " + ship.length;
 
 		let shipsCount = 0;
 		let resolveCoordinates;
