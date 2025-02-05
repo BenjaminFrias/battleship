@@ -1,9 +1,10 @@
 :root {
 	--grid-size: 10%;
-	--neo-blue: #3061f5;
 	--ocean-blue: #262b74;
 	--dark-blue: #14173d;
-	--neo-red: #ff6e6c;
+	--neo-blue: #3061f5;
+	--neo-red: #f06c5b;
+	--neo-green: #42ca91;
 }
 
 html,
@@ -101,21 +102,12 @@ div.page {
 	right: -80px;
 }
 
-.btn-bg {
-	background: white;
+#start-game-btn {
+	position: relative;
 	width: 300px;
 	height: 60px;
 	bottom: 90px;
-	position: relative;
-	border-radius: 20px;
-}
-
-#start-game-btn {
-	position: relative;
-	top: -4px;
-	right: 4px;
-	width: 100%;
-	height: 100%;
+	right: 0px;
 	border-radius: 20px;
 	border: 4px solid white;
 	background: var(--ocean-blue);
@@ -124,13 +116,20 @@ div.page {
 	font-weight: 700;
 	font-size: 1.8rem;
 	cursor: pointer;
+	box-shadow: 4px 4px white;
 	transition: all 150ms ease;
 }
 
 #start-game-btn:hover {
-	top: -10px;
-	right: 10px;
+	bottom: 95px;
+	right: 5px;
+	box-shadow: 9px 9px white;
 	transition: all 150ms ease;
+}
+
+#start-placing-btn:hover {
+	transition: all 150ms ease;
+	scale: 1.2;
 }
 
 /* START PLACING SHIPS PAGE */
@@ -150,6 +149,10 @@ div.page {
 	border-radius: 20px;
 	border: 3px solid black;
 	box-shadow: 3px 3px black;
+}
+
+#start-placing-btn:hover {
+	scale: 1.2;
 }
 
 .placing-title-bg {
@@ -189,10 +192,18 @@ h2#start-placing-title {
 	font-weight: 800;
 	font-size: 1.8rem;
 	cursor: pointer;
+	transition: all 200ms ease;
+}
+
+#start-placing-btn:hover {
+	scale: 1.1;
+	transition: all 200ms ease;
 }
 
 .decorative-ship-1,
-.decorative-ship-2 {
+.decorative-ship-2,
+.decorative-ship-3,
+.decorative-ship-4 {
 	position: absolute;
 	z-index: 999;
 	width: 300px;
@@ -204,17 +215,195 @@ h2#start-placing-title {
 }
 
 .decorative-ship-1 {
+	width: 200px;
+	height: 80px;
+	top: 50px;
+	right: 300px;
+	background: var(--neo-red);
+	transform: rotate(-8deg);
+}
+.decorative-ship-2 {
+	width: 200px;
+	height: 80px;
+	bottom: 90px;
+	left: 200px;
+	background: var(--neo-blue);
+	transform: rotate(-23deg);
+}
+
+.decorative-ship-3 {
 	top: 70px;
 	right: 200px;
 	background: var(--neo-red);
 }
-.decorative-ship-2 {
+.decorative-ship-4 {
 	top: 120px;
 	left: 200px;
 	background: var(--neo-blue);
 }
 
-/* PHASE TITLE */
+/* SET COORDINATES */
+
+#set-coordinates-page {
+	display: flex;
+	flex: 1 1 auto;
+	background: var(--neo-blue);
+}
+
+#current-board-container {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	background: var(--neo-blue);
+}
+
+.sidebar {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	margin: 5px;
+	width: 500px;
+}
+
+#set-coordinates-title {
+	position: absolute;
+	display: flex;
+	align-self: center;
+	align-items: center;
+	margin: 0;
+	padding: 10px 20px;
+	z-index: 999;
+	border-radius: 50px;
+	border: 3px solid black;
+	background: white;
+	color: var(--ocean-blue);
+	font-family: "Inter", Arial, Helvetica, sans-serif;
+	font-size: 2vw;
+	font-weight: 900;
+	box-shadow: 4px 4px black;
+}
+
+.sidebar-container {
+	display: flex;
+	flex-direction: column;
+	position: absolute;
+	height: 96%;
+	top: 28px;
+	border: 3px solid black;
+	background: white;
+	border-radius: 15px;
+}
+
+#placement-rules {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	margin-top: 20px;
+	padding: 20px 40px;
+	border-bottom: 3px solid black;
+	font-family: "Inter", Arial, Helvetica, sans-serif;
+}
+
+#placement-rules h3 {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: 25px 0px 10px 0px;
+	font-size: 1.7vw;
+	font-weight: 700;
+}
+
+#placement-rules ol {
+	flex: 1;
+	display: flex;
+	justify-content: space-between;
+	flex-direction: column;
+	list-style: none;
+	padding: 0;
+}
+
+#placement-rules ol li {
+	font-size: 1.2vw;
+	width: 60%;
+	padding: 15px;
+	border: 3px solid black;
+	border-radius: 15px;
+	box-shadow: 4px 4px black;
+}
+
+#placement-rules ol li:nth-child(1) {
+	background: var(--neo-red);
+	color: white;
+}
+
+#placement-rules ol li:nth-child(2) {
+	background: var(--neo-blue);
+	color: white;
+	align-self: end;
+}
+
+#placement-rules ol li:nth-child(3) {
+	background: var(--neo-green);
+	color: white;
+	position: relative;
+	left: 25px;
+}
+
+#ship-length {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 20px 40px;
+	margin: 15px 0px 0px 0px;
+	font-family: "Inter", Arial, Helvetica, sans-serif;
+	font-size: 1.6vw;
+	font-weight: 700;
+}
+
+#coordinates-input-container {
+	display: flex;
+	justify-content: center;
+	gap: 20px;
+	padding: 20px 40px;
+	margin: 0px 0px 15px 0px;
+}
+
+#coord-input {
+	padding: 15px 15px;
+	border: 3px solid black;
+	border-radius: 15px;
+	box-shadow: 4px 4px black;
+	font-family: "Inter", Arial, Helvetica, sans-serif;
+	font-weight: 700;
+	font-size: 1.2rem;
+	outline: 0px;
+}
+
+#coord-submit {
+	position: relative;
+	bottom: 0px;
+	right: 0px;
+	border: 3px solid black;
+	border-radius: 15px;
+	background-color: var(--neo-blue);
+	font-family: "Inter", Arial, Helvetica, sans-serif;
+	font-weight: 700;
+	font-size: 1.2rem;
+	color: white;
+	padding: 0px 15px;
+	box-shadow: 4px 4px black;
+	cursor: pointer;
+	transition: all 200ms ease;
+}
+
+#coord-submit:hover {
+	bottom: 3px;
+	right: 3px;
+	box-shadow: 7px 7px black;
+	transition: all 200ms ease;
+}
 
 /* GAMEBOARD */
 
@@ -230,9 +419,9 @@ h2#start-placing-title {
 #player-gameboard,
 #opponent-gameboard {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(var(--grid-size), 1fr));
-	width: 600px;
-	height: 600px;
+	grid-template-columns: repeat(10, 1fr);
+	width: 700px;
+	height: 700px;
 }
 
 #player-gameboard.hide,
@@ -248,9 +437,18 @@ h2#start-placing-title {
 /* CELL */
 
 .board-cell {
-	background-color: rgb(123, 120, 216);
-	border: 1px solid rgb(57, 53, 117);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background: white;
+	box-shadow: 3px 3px black;
+	border: 3px solid black;
+	border-radius: 10px;
 	box-sizing: border-box;
+	font-family: "Inter", Arial, Helvetica, sans-serif;
+	font-size: 1.2rem;
+	color: var(--ocean-blue);
+	font-weight: 600;
 }
 
 .board-cell.miss {

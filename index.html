@@ -20,19 +20,19 @@
 				<div id="start-game-page" class="page">
 					<div class="cannonball-1"></div>
 					<div class="cannonball-2"></div>
+					<div class="decorative-ship-1"></div>
+					<div class="decorative-ship-2"></div>
 					<div id="title-container">
 						<h1 id="game-title">Battleship!</h1>
 					</div>
-					<div class="btn-bg">
-						<button id="start-game-btn">Start game</button>
-					</div>
+					<button id="start-game-btn">Start game</button>
 				</div>
 
 				<!-- Placement pages -->
 				<div id="start-placing-page" class="page hide">
 					<div id="start-placing-content">
-						<div class="decorative-ship-1"></div>
-						<div class="decorative-ship-2"></div>
+						<div class="decorative-ship-3"></div>
+						<div class="decorative-ship-4"></div>
 						<div class="placing-title-bg">
 							<h2 id="start-placing-title"></h2>
 						</div>
@@ -41,18 +41,44 @@
 				</div>
 
 				<div id="set-coordinates-page" class="page hide">
-					<h2 id="set-coordinates-title"></h2>
-					<h2 id="ship-length"></h2>
-					<div id="coordinates-input-container">
-						<input
-							type="text"
-							name="coordinate"
-							id="coord-input"
-							placeholder="Enter coordinate: "
-						/>
-						<button id="coord-submit">Set coordinate</button>
+					<div class="sidebar">
+						<h2 id="set-coordinates-title"></h2>
+						<div class="sidebar-container">
+							<div id="placement-rules">
+								<h3>Ship Placement Rules:</h3>
+								<ol>
+									<li>
+										<strong>Enter Coordinates:</strong>
+										Specify each square your ship occupies
+										using coordinates like "A1,A2,A3",
+										separated by commas.
+									</li>
+									<li>
+										<strong>No Overlaps:</strong> Ships
+										cannot overlap each other.
+									</li>
+									<li>
+										<strong>Stay in Bounds:</strong> All
+										coordinates must be within A1 to J10.
+									</li>
+								</ol>
+							</div>
+							<h2 id="ship-length"></h2>
+							<div id="coordinates-input-container">
+								<input
+									type="text"
+									name="coordinate"
+									id="coord-input"
+									placeholder="Enter your coordinates: "
+									spellcheck="false"
+								/>
+								<button id="coord-submit">Place</button>
+							</div>
+						</div>
 					</div>
-					<div id="current-placing-gameboard"></div>
+					<div id="current-board-container">
+						<div id="current-placing-gameboard"></div>
+					</div>
 				</div>
 
 				<!-- Gameboards -->

@@ -24,6 +24,8 @@ export class DOMHandler {
 				const boardCell = document.createElement("div");
 				boardCell.classList.add("board-cell");
 				boardCell.dataset.coords = col + "-" + row;
+				boardCell.textContent =
+					String.fromCharCode(col + 65) + (row + 1);
 
 				// copy cell to append it to the opponent board
 				const boardCell2 = boardCell.cloneNode(true);

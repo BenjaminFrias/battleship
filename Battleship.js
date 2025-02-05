@@ -130,7 +130,7 @@ function startGame() {
 
 		updateTitle(
 			setCoordinatesTitle,
-			`${currentPlayer.name}, Enter your ship's coordinates.`
+			`${currentPlayer.name}, Deploy your fleet!`
 		);
 		domHandler.showPage(setCoordsPage);
 	}
@@ -217,7 +217,7 @@ async function handlePlaceShip(player) {
 	const coordSubmitBtn = coordsContainer.querySelector("#coord-submit");
 
 	for (let ship of ships) {
-		shipLengthTitle.textContent = "Ship length: " + ship.length;
+		shipLengthTitle.textContent = `Next ship length: ${ship.length} squares!`;
 
 		let shipsCount = 0;
 		let resolveCoordinates;
@@ -274,8 +274,7 @@ async function handlePlaceShip(player) {
 }
 
 function createShips() {
-	// const SHIPLENGTHS = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1];
-	const SHIPLENGTHS = [1];
+	const SHIPLENGTHS = [5, 4, 3, 3, 2];
 	const ships = [];
 
 	for (let i in SHIPLENGTHS) {
