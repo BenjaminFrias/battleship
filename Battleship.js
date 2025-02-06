@@ -136,10 +136,7 @@ function startGame() {
 	}
 
 	function startBattlePhase() {
-		updateTitle(
-			passDeviceTitle,
-			`It's time for battle!, ${currentPlayer.name}`
-		);
+		updateTitle(passDeviceTitle, `${currentPlayer.name}, Attack!`);
 
 		domHandler.showPage(passDevicePage);
 
@@ -178,7 +175,7 @@ function startGame() {
 					swapTurns();
 					updateTitle(
 						passDeviceTitle,
-						`Attack!, ${currentPlayer.name}`
+						`${currentPlayer.name}, Attack!`
 					);
 					domHandler.showPage(passDevicePage);
 				} else if (result == "gameOver") {
@@ -274,7 +271,7 @@ async function handlePlaceShip(player) {
 }
 
 function createShips() {
-	const SHIPLENGTHS = [5, 4, 3, 3, 2];
+	const SHIPLENGTHS = [1];
 	const ships = [];
 
 	for (let i in SHIPLENGTHS) {

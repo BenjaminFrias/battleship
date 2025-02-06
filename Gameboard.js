@@ -6,17 +6,28 @@ export class Gameboard {
 	}
 
 	placeShip(ship, shipCoords) {
+		const coordsToPlace = [];
+		let coordsError = false;
 		for (let i = 0; i < shipCoords.length; i++) {
 			const singleCoordinate = shipCoords[i];
 			const singleCoorString = singleCoordinate.toString();
 
 			if (!this.board.has(singleCoorString)) {
-				this.board.set(singleCoorString, ship);
+				coordsToPlace.push({ singleCoorString, ship });
 			} else {
-				throw Error("This coordinate has a ship already");
+				coordsError = true;
+				break;
 			}
 		}
-		this.ships.push({ ship: ship, coords: shipCoords });
+
+		if (coordsError == false) {
+			for (let obj of coordsToPlace) {
+				this.board.set(obj.singleCoorString, obj.ship);
+			}
+			this.ships.push({ ship: ship, coords: shipCoords });
+		} else {
+			alert("You already place a ship");
+		}
 	}
 
 	destroyShip(player, board, ship) {
