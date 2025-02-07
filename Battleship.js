@@ -168,8 +168,11 @@ function startGame() {
 		// handle attack for every cell
 		const cells = document.querySelectorAll(".board-cell");
 		cells.forEach((cell) => {
+			cell.textContent = "";
 			cell.addEventListener("click", () => {
 				const result = handleAttack(cell);
+
+				// Remove text content when user attacks
 
 				if (result == "miss") {
 					swapTurns();
@@ -271,7 +274,7 @@ async function handlePlaceShip(player) {
 }
 
 function createShips() {
-	const SHIPLENGTHS = [1];
+	const SHIPLENGTHS = [1, 3];
 	const ships = [];
 
 	for (let i in SHIPLENGTHS) {

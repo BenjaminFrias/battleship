@@ -31,19 +31,19 @@
 				<!-- Placement pages -->
 				<div id="start-placing-page" class="page hide">
 					<div id="start-placing-content">
-						<div class="decorative-ship-3"></div>
-						<div class="decorative-ship-4"></div>
-						<div class="placing-title-bg">
-							<h2 id="start-placing-title"></h2>
-						</div>
+						<h2 id="start-placing-title"></h2>
 						<button id="start-placing-btn">Place ships</button>
+						<div id="decorative-place-ship"></div>
 					</div>
 				</div>
 
 				<div id="set-coordinates-page" class="page hide">
-					<div class="sidebar">
-						<h2 id="set-coordinates-title"></h2>
-						<div class="sidebar-container">
+					<div class="sidebar coordinates-sidebar">
+						<h2
+							id="set-coordinates-title"
+							class="sidebar-title"
+						></h2>
+						<div class="sidebar-container sidebar-coords-container">
 							<div id="placement-rules">
 								<h3>Ship Placement Rules:</h3>
 								<ol>
@@ -84,10 +84,8 @@
 				<!-- Gameboards -->
 				<div id="pass-device-page" class="page hide">
 					<div id="pass-device-content">
-						<div>
-							<h2 id="pass-device-title"></h2>
-							<button id="pass-btn">Attack!</button>
-						</div>
+						<h2 id="pass-device-title"></h2>
+						<button id="pass-btn">Attack!</button>
 						<div class="star star-1"></div>
 						<div class="star star-2"></div>
 						<div class="star star-3"></div>
@@ -95,8 +93,28 @@
 				</div>
 
 				<div id="battle-page" class="page hide">
-					<h2 id="attack-title"></h2>
-					<div id="gameboard"></div>
+					<div id="battle-sidebar" class="sidebar">
+						<h2 id="attack-title" class="sidebar-title"></h2>
+						<div class="sidebar-container battle-sidebar-container">
+							<ol>
+								<li>
+									<div class="cell-example miss"></div>
+									<p>Miss</p>
+								</li>
+								<li>
+									<div class="cell-example hit"></div>
+									<p>Hit</p>
+								</li>
+								<li>
+									<div class="cell-example destroyed"></div>
+									<p>Ship destroyed</p>
+								</li>
+							</ol>
+						</div>
+					</div>
+					<div id="gameboard">
+						<h2>Current player</h2>
+					</div>
 				</div>
 
 				<!-- Winner and Restart page -->
