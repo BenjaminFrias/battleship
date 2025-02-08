@@ -9,14 +9,7 @@ export class Gameboard {
 		for (let i = 0; i < shipCoords.length; i++) {
 			const singleCoordinate = shipCoords[i];
 			const singleCoorString = singleCoordinate.toString();
-
-			if (!this.board.has(singleCoorString)) {
-				this.board.set(singleCoorString, ship);
-			} else {
-				// TODO: Do something to avoid placing a ship.
-
-				alert("You already place a ship");
-			}
+			this.board.set(singleCoorString, ship);
 		}
 		this.ships.push({ ship: ship, coords: shipCoords });
 	}
@@ -64,58 +57,90 @@ export class Gameboard {
 	}
 
 	validateCoordinates(coordinates, mustLength) {
-		if (!coordinates) {
-			return false;
-		}
+		// if (!coordinates) {
+		// 	return false;
+		// }
 
-		if (typeof coordinates != "string") {
-			return false;
-		}
+		// // if (typeof coordinates != "string") {
+		// // 	return false;
+		// // }
 
 		if (coordinates.includes(",")) {
 			const splittedCoords = coordinates
 				.split(",")
 				.filter((item) => item != "");
 
+			// Check for coordinate length
 			if (splittedCoords.length != mustLength) {
 				return false;
 			}
 
+			// Validate coordinate format
+			const areCoordsValid = splittedCoords.every((coord) =>
+				this.validateSingleCoord(coord)
+			);
+
+			if (!areCoordsValid) {
+				return false;
+			}
+
 			// Check for repeated values;
-			const repeatedCoords = hasRepeatedCoords(splittedCoords);
+			const repeatedCoords = this.hasRepeatedCoords(splittedCoords);
 			if (repeatedCoords) {
 				return false;
 			}
 
-			const areCoordsValid = splittedCoords.every((coord) =>
-				validateSingleCoord(coord)
+			// Check if coords already exist in board
+			const transformedCoords = this.transformCoordinates(
+				splittedCoords.join("")
 			);
+			const isCellOccupied = this.checkExistingCoords(transformedCoords);
 
-			return areCoordsValid;
+			if (isCellOccupied) {
+				return false;
+			}
+
+			return true;
 		} else {
-			if (mustLength > 1 || !validateSingleCoord(coordinates)) {
+			if (mustLength > 1 || !this.validateSingleCoord(coordinates)) {
+				return false;
+			}
+
+			const transformedCoords = this.transformCoordinates(coordinates);
+			const isCellOccupied = this.checkExistingCoords(transformedCoords);
+			if (isCellOccupied) {
 				return false;
 			}
 		}
 
 		return true;
+	}
 
-		function validateSingleCoord(coord) {
-			// TODO: Validate if a coordinate exist in board.
-			const singleCoordRegex = /^[a-j](?:[1-9]|10)$/i;
-			return singleCoordRegex.test(coord);
-		}
+	validateSingleCoord(coord) {
+		const singleCoordRegex = /^[a-j](?:[1-9]|10)$/i;
+		return singleCoordRegex.test(coord);
+	}
 
-		function hasRepeatedCoords(coords) {
-			for (let i = 0; i < coords.length - 1; i++) {
-				for (let j = i + 1; j < coords.length; j++) {
-					if (coords[i] == coords[j]) {
-						// Coordinate has repeated values
-						return true;
-					}
+	hasRepeatedCoords(coords) {
+		for (let i = 0; i < coords.length - 1; i++) {
+			for (let j = i + 1; j < coords.length; j++) {
+				if (coords[i] == coords[j]) {
+					return true;
 				}
 			}
-			return false;
+		}
+		return false;
+	}
+
+	checkExistingCoords(coords) {
+		for (let i = 0; i < coords.length; i++) {
+			const coordString = coords[i].toString();
+
+			if (this.board.has(coordString)) {
+				return true;
+			} else {
+				return false;
+			}
 		}
 	}
 

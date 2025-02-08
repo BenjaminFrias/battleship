@@ -239,9 +239,13 @@ async function handlePlaceShip(player) {
 
 			// If coordinate is correct, place ship
 			if (coordResult) {
-				const transformedCoords = player.gameboard.transformCoordinates(
-					coordInput.value
-				);
+				const splittedCoords = coordInput.value
+					.split(",")
+					.filter((item) => item != "")
+					.join(",");
+
+				const transformedCoords =
+					player.gameboard.transformCoordinates(splittedCoords);
 
 				shipsCount++;
 
@@ -264,9 +268,7 @@ async function handlePlaceShip(player) {
 				}
 				coordInput.value = "";
 			} else {
-				alert(
-					"Invalid coordinate format.  Please use a letter A-J followed by a number 1-10 (e.g., B5)"
-				);
+				alert("Invalid coordinate.");
 				coordInput.value = "";
 			}
 		}
