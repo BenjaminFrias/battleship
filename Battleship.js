@@ -71,6 +71,10 @@ function initializeGame() {
 	const playerBoard2 = document.querySelector("#opponent-gameboard");
 	player1.gameboard.boardElement = playerBoard1;
 	player2.gameboard.boardElement = playerBoard2;
+
+	// Add event listener to start placing btn
+	startPlacingListener = startPlacingPhase;
+	startPlacingBtn.addEventListener("click", startPlacingListener);
 }
 
 function startGame() {
@@ -83,113 +87,102 @@ function startGame() {
 		startPlacingTitle,
 		`${currentPlayer.name}, get your ships ready! `
 	);
+}
 
-	// Add event listener to start placing btn
-	startPlacingListener = startPlacingPhase;
-	startPlacingBtn.addEventListener("click", startPlacingListener);
+async function startPlacingPhase() {
+	moveBoard(currentPlayer.gameboard.boardElement, currentPlaceGameboard);
+	domHandler.showPage(setCoordsPage);
+	domHandler.updateTitle(
+		setCoordinatesTitle,
+		`${currentPlayer.name}, Deploy your fleet!`
+	);
 
-	async function startPlacingPhase() {
+	// Manage placing players' turns
+	await handlePlaceShip(currentPlayer);
+	moveBoard(currentPlayer.gameboard.boardElement, gameboardsContainer);
+
+	if (currentPlayer == player2) {
+		swapTurns();
+		startBattlePhase();
+	} else {
+		swapTurns();
+		domHandler.showPage(placeShipsPage);
+		domHandler.updateTitle(
+			startPlacingTitle,
+			`${currentPlayer.name}, get your ships ready!`
+		);
 		moveBoard(currentPlayer.gameboard.boardElement, currentPlaceGameboard);
-		domHandler.showPage(setCoordsPage);
-		domHandler.updateTitle(
-			setCoordinatesTitle,
-			`${currentPlayer.name}, Deploy your fleet!`
-		);
-
-		// Manage placing players' turns
-		await handlePlaceShip(currentPlayer);
-		moveBoard(currentPlayer.gameboard.boardElement, gameboardsContainer);
-
-		if (currentPlayer == player2) {
-			swapTurns();
-			startBattlePhase();
-		} else {
-			swapTurns();
-			domHandler.showPage(placeShipsPage);
-			domHandler.updateTitle(
-				startPlacingTitle,
-				`${currentPlayer.name}, get your ships ready!`
-			);
-			moveBoard(
-				currentPlayer.gameboard.boardElement,
-				currentPlaceGameboard
-			);
-		}
-
-		function moveBoard(board, container) {
-			container.appendChild(board);
-		}
 	}
 
-	function swapTurns() {
-		currentPlayer = currentPlayer == player1 ? player2 : player1;
-		currentOpponent = currentPlayer == player2 ? player1 : player2;
+	function moveBoard(board, container) {
+		container.appendChild(board);
+	}
+}
+
+function startBattlePhase() {
+	domHandler.updateTitle(passDeviceTitle, `${currentPlayer.name}, Attack!`);
+
+	domHandler.showPage(passDevicePage);
+
+	// Remove all ships classes from boards
+	domHandler.toggleShips(
+		currentOpponent.id,
+		currentOpponent.gameboard.board,
+		"remove"
+	);
+
+	domHandler.toggleShips(
+		currentPlayer.id,
+		currentPlayer.gameboard.board,
+		"remove"
+	);
+
+	passDeviceBtn.addEventListener("click", passDevice);
+
+	function passDevice() {
+		domHandler.updateTitle(
+			attackTitle,
+			`Click a cell to attack ${currentOpponent.name}'s board!`
+		);
+
+		domHandler.showGameboard(currentOpponent.id);
+		domHandler.showPage(battlePage);
 	}
 
-	function startBattlePhase() {
-		domHandler.updateTitle(
-			passDeviceTitle,
-			`${currentPlayer.name}, Attack!`
-		);
+	// handle attack for every cell
+	const cells = document.querySelectorAll(".board-cell");
+	cells.forEach((cell) => {
+		cell.textContent = "";
+		cell.addEventListener("click", () => {
+			const result = handleAttack(cell);
 
-		domHandler.showPage(passDevicePage);
-
-		// Remove all ships classes from boards
-		domHandler.toggleShips(
-			currentOpponent.id,
-			currentOpponent.gameboard.board,
-			"remove"
-		);
-
-		domHandler.toggleShips(
-			currentPlayer.id,
-			currentPlayer.gameboard.board,
-			"remove"
-		);
-
-		passDeviceBtn.addEventListener("click", passDevice);
-
-		function passDevice() {
-			domHandler.updateTitle(
-				attackTitle,
-				`Click a cell to attack ${currentOpponent.name}'s board!`
-			);
-
-			domHandler.showGameboard(currentOpponent.id);
-			domHandler.showPage(battlePage);
-		}
-
-		// handle attack for every cell
-		const cells = document.querySelectorAll(".board-cell");
-		cells.forEach((cell) => {
-			cell.textContent = "";
-			cell.addEventListener("click", () => {
-				const result = handleAttack(cell);
-
-				// Remove text content when user attacks
-
-				if (result == "miss") {
-					swapTurns();
-					domHandler.updateTitle(
-						passDeviceTitle,
-						`${currentPlayer.name}, Attack!`
-					);
-					domHandler.showPage(passDevicePage);
-				} else if (result == "gameOver") {
-					gameOver();
-				} else if (result == "prevShoot") {
-					alert("You attacked that cell already");
-				}
-			});
+			// Remove text content when user attacks
+			if (result == "miss") {
+				swapTurns();
+				domHandler.updateTitle(
+					passDeviceTitle,
+					`${currentPlayer.name}, Attack!`
+				);
+				domHandler.showPage(passDevicePage);
+			} else if (result == "gameOver") {
+				gameOver();
+			} else if (result == "prevShoot") {
+				alert("You attacked that cell already");
+			}
 		});
-	}
+	});
+}
 
-	function gameOver() {
-		const winner = currentPlayer;
-		const winnerTitle = document.querySelector("#winner-title");
-		winnerTitle.textContent = `${winner.name} won!`;
-		domHandler.showPage(winnerPage);
-	}
+function gameOver() {
+	const winner = currentPlayer;
+	const winnerTitle = document.querySelector("#winner-title");
+	winnerTitle.textContent = `${winner.name} won!`;
+	domHandler.showPage(winnerPage);
+}
+
+function swapTurns() {
+	currentPlayer = currentPlayer == player1 ? player2 : player1;
+	currentOpponent = currentPlayer == player2 ? player1 : player2;
 }
 
 async function handlePlaceShip(player) {
