@@ -715,3 +715,62 @@ h2#start-placing-title {
 .board-cell.destroyed::before {
 	display: none;
 }
+
+/* WINNER PAGE */
+
+#winner-page {
+	background: var(--ocean-blue);
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: 20px;
+}
+
+#winner-title {
+	font-family: "Inter", Arial, Helvetica, sans-serif;
+	font-weight: 800;
+	font-size: 7rem;
+	color: white;
+	margin: 0;
+}
+
+.winner-options-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 15px;
+}
+
+.winner-options-container > button {
+	position: relative;
+	bottom: 0px;
+	right: 0px;
+	width: 200px;
+	border: 3px solid black;
+	border-radius: 15px;
+	background-color: var(--neo-blue);
+	font-family: "Inter", Arial, Helvetica, sans-serif;
+	font-weight: 700;
+	font-size: 2rem;
+	color: white;
+	padding: 5px 0px;
+	box-shadow: 4px 4px black;
+	cursor: pointer;
+	transition: all 200ms ease;
+}
+
+.winner-options-container > button:hover {
+	bottom: 3px;
+	right: 3px;
+	box-shadow: 7px 7px black;
+	transition: all 200ms ease;
+}
+
+#restart-game-btn {
+	background: var(--neo-red);
+}
+
+#return-home-btn {
+	background: var(--neo-blue);
+}
