@@ -21,8 +21,9 @@ const startPlacingTitle = document.querySelector("#start-placing-title");
 const setCoordinatesTitle = document.querySelector("#set-coordinates-title");
 const passDeviceTitle = document.querySelector("#pass-device-title");
 const attackTitle = document.querySelector("#attack-title");
-
-// TODO: Refactor: Try to move every gameboard function to gameboard
+const currentPlaceGameboard = document.querySelector(
+	"#current-placing-gameboard"
+);
 
 // TODO: Feature: validate coords to return different errors to show to the user
 // TODO: Feature: Drag and Drop feature for placing ships.
@@ -87,61 +88,42 @@ function startGame() {
 	startPlacingListener = startPlacingPhase;
 	startPlacingBtn.addEventListener("click", startPlacingListener);
 
-	function startPlacingPhase() {
-		const currentPlaceGameboard = document.querySelector(
-			"#current-placing-gameboard"
-		);
-
-		domHandler.updateTitle(
-			startPlacingTitle,
-			`${currentPlayer.name}, get your ships ready!`
-		);
-
-		handlePlaceShip(currentPlayer).then(() => {
-			if (currentPlayer == player2) {
-				// Move previous player's board to gameboard Container
-
-				moveBoard(
-					currentPlayer.gameboard.boardElement,
-					gameboardsContainer
-				);
-
-				swapTurns();
-				startBattlePhase();
-			} else {
-				// Move previous player's board to gameboard Container
-
-				moveBoard(
-					currentPlayer.gameboard.boardElement,
-					gameboardsContainer
-				);
-
-				// Swap turns when first player finished placing its ships.
-				swapTurns();
-
-				domHandler.updateTitle(
-					startPlacingTitle,
-					`${currentPlayer.name}, get your ships ready!`
-				);
-
-				// Show current player's board by moving it to
-
-				moveBoard(
-					currentPlayer.gameboard.boardElement,
-					currentPlaceGameboard
-				);
-
-				domHandler.showPage(placeShipsPage);
-			}
-		});
-
+	async function startPlacingPhase() {
 		moveBoard(currentPlayer.gameboard.boardElement, currentPlaceGameboard);
-
+		domHandler.showPage(setCoordsPage);
 		domHandler.updateTitle(
 			setCoordinatesTitle,
 			`${currentPlayer.name}, Deploy your fleet!`
 		);
-		domHandler.showPage(setCoordsPage);
+
+		// Manage placing players' turns
+		await handlePlaceShip(currentPlayer);
+		moveBoard(currentPlayer.gameboard.boardElement, gameboardsContainer);
+
+		if (currentPlayer == player2) {
+			swapTurns();
+			startBattlePhase();
+		} else {
+			swapTurns();
+			domHandler.showPage(placeShipsPage);
+			domHandler.updateTitle(
+				startPlacingTitle,
+				`${currentPlayer.name}, get your ships ready!`
+			);
+			moveBoard(
+				currentPlayer.gameboard.boardElement,
+				currentPlaceGameboard
+			);
+		}
+
+		function moveBoard(board, container) {
+			container.appendChild(board);
+		}
+	}
+
+	function swapTurns() {
+		currentPlayer = currentPlayer == player1 ? player2 : player1;
+		currentOpponent = currentPlayer == player2 ? player1 : player2;
 	}
 
 	function startBattlePhase() {
@@ -207,15 +189,6 @@ function startGame() {
 		const winnerTitle = document.querySelector("#winner-title");
 		winnerTitle.textContent = `${winner.name} won!`;
 		domHandler.showPage(winnerPage);
-	}
-
-	function moveBoard(board, container) {
-		container.appendChild(board);
-	}
-
-	function swapTurns() {
-		currentPlayer = currentPlayer == player1 ? player2 : player1;
-		currentOpponent = currentPlayer == player2 ? player1 : player2;
 	}
 }
 
