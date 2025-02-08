@@ -39,6 +39,7 @@ body {
 
 div.page {
 	flex-basis: 100%;
+	overflow: hidden;
 }
 
 /* START PAGE */
@@ -48,7 +49,6 @@ div.page {
 	flex-direction: column;
 	align-items: center;
 	position: relative;
-	overflow: hidden;
 	width: 100%;
 	height: 100%;
 	background: var(--neo-blue);
@@ -60,13 +60,13 @@ div.page {
 	align-items: center;
 	position: relative;
 	margin: auto 0;
-	width: 88%;
-	height: 280px;
+	width: 90%;
+	height: 40%;
 	transform: rotate(-15deg);
 	background: var(--ocean-blue);
-	border: 10px solid var(--dark-blue);
-	border-radius: 100px;
-	box-shadow: 10px 15px var(--dark-blue);
+	border: 7px solid var(--dark-blue);
+	border-radius: 80px;
+	box-shadow: 9px 12px var(--dark-blue);
 }
 
 #game-title {
@@ -75,7 +75,7 @@ div.page {
 	font-family: "Modak", Arial, Helvetica, sans-serif;
 	color: white;
 	font-weight: 500;
-	font-size: 13rem;
+	font-size: clamp(4rem, 15vw, 12rem);
 	cursor: default;
 }
 
@@ -86,8 +86,8 @@ div.page {
 	background-image: url("./assets/cannonball.png");
 	background-size: cover;
 	background-repeat: no-repeat;
-	width: 600px;
-	height: 600px;
+	width: 40vw;
+	height: 40vw;
 	z-index: 999;
 }
 
@@ -105,12 +105,12 @@ div.page {
 
 #start-game-btn {
 	position: relative;
-	width: 300px;
+	width: 250px;
 	height: 60px;
-	bottom: 90px;
+	bottom: 60px;
 	right: 0px;
-	border-radius: 20px;
-	border: 4px solid white;
+	border-radius: 15px;
+	border: 3px solid white;
 	background: var(--ocean-blue);
 	color: white;
 	font-family: "Inter", Helvetica, sans-serif;
@@ -122,7 +122,7 @@ div.page {
 }
 
 #start-game-btn:hover {
-	bottom: 95px;
+	bottom: 65px;
 	right: 5px;
 	box-shadow: 9px 9px white;
 	transition: all 150ms ease;
@@ -145,7 +145,7 @@ div.page {
 .decorative-ship-1 {
 	width: 200px;
 	height: 80px;
-	top: 50px;
+	top: 20px;
 	right: 300px;
 	background: var(--neo-red);
 	transform: rotate(-8deg);
@@ -153,7 +153,7 @@ div.page {
 .decorative-ship-2 {
 	width: 200px;
 	height: 80px;
-	bottom: 90px;
+	bottom: 60px;
 	left: 200px;
 	background: var(--neo-blue);
 	transform: rotate(-23deg);
@@ -187,7 +187,7 @@ div.page {
 }
 
 h2#start-placing-title {
-	width: 800px;
+	width: 60%;
 	font-family: "Inter", Arial, Helvetica, sans-serif;
 	font-size: 7vw;
 	font-weight: 800;
@@ -212,7 +212,7 @@ h2#start-placing-title {
 	font-weight: 700;
 	font-size: 2rem;
 	color: white;
-	padding: 10px 25px;
+	padding: 7px 10px;
 	box-shadow: 4px 4px black;
 	cursor: pointer;
 	transition: all 200ms ease;
@@ -230,13 +230,14 @@ h2#start-placing-title {
 #decorative-place-ship {
 	position: absolute;
 	background-image: url(./assets/ships.svg);
-	width: 1200px;
 	background-size: cover;
-	height: 1200px;
+	width: clamp(3rem, 60vw + 15rem, 1000px);
+	height: clamp(3rem, 60vw + 15rem, 1000px);
 	background-repeat: no-repeat;
 	background-position: center;
 	bottom: -280px;
 	right: -80px;
+	user-select: none;
 }
 
 /* SET COORDINATES */
@@ -261,7 +262,7 @@ h2#start-placing-title {
 	display: flex;
 	flex-direction: column;
 	margin: 5px;
-	width: 500px;
+	width: 30%;
 }
 
 .sidebar-title {
@@ -286,8 +287,9 @@ h2#start-placing-title {
 	display: flex;
 	flex-direction: column;
 	position: absolute;
-	height: 96%;
+	box-sizing: border-box;
 	top: 28px;
+	width: 100%;
 	border: 3px solid black;
 	background: white;
 	border-radius: 15px;
@@ -298,7 +300,8 @@ h2#start-placing-title {
 	flex-direction: column;
 	flex: 1;
 	margin-top: 20px;
-	padding: 20px 40px;
+	padding: 10px 20px;
+	box-sizing: border-box;
 	border-bottom: 3px solid black;
 	font-family: "Inter", Arial, Helvetica, sans-serif;
 }
@@ -308,7 +311,7 @@ h2#start-placing-title {
 	align-items: center;
 	justify-content: center;
 	margin: 25px 0px 10px 0px;
-	font-size: 1.7vw;
+	font-size: 1.6vw;
 	font-weight: 700;
 }
 
@@ -319,10 +322,11 @@ h2#start-placing-title {
 	flex-direction: column;
 	list-style: none;
 	padding: 0;
+	gap: 15px;
 }
 
 #placement-rules ol li {
-	font-size: 1.2vw;
+	font-size: 1.1vw;
 	width: 60%;
 	padding: 15px;
 	border: 3px solid black;
@@ -352,29 +356,31 @@ h2#start-placing-title {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	padding: 20px 40px;
-	margin: 15px 0px 0px 0px;
+	padding: 15px 40px;
+	margin: 5px 0px 0px 0px;
 	font-family: "Inter", Arial, Helvetica, sans-serif;
-	font-size: 1.6vw;
+	font-size: 1.5vw;
 	font-weight: 700;
 }
 
 #coordinates-input-container {
 	display: flex;
 	justify-content: center;
-	gap: 20px;
-	padding: 20px 40px;
+	gap: 10px;
+	box-sizing: border-box;
+	padding: 15px;
 	margin: 0px 0px 15px 0px;
 }
 
 #coord-input {
-	padding: 15px 15px;
+	width: 100%;
+	padding: 10px 15px;
 	border: 3px solid black;
 	border-radius: 15px;
-	box-shadow: 4px 4px black;
+	box-shadow: 2px 2px black;
 	font-family: "Inter", Arial, Helvetica, sans-serif;
 	font-weight: 700;
-	font-size: 1.2rem;
+	font-size: 1rem;
 	outline: 0px;
 }
 
@@ -390,7 +396,7 @@ h2#start-placing-title {
 	font-size: 1.2rem;
 	color: white;
 	padding: 0px 15px;
-	box-shadow: 4px 4px black;
+	box-shadow: 2px 2px black;
 	cursor: pointer;
 	transition: all 200ms ease;
 }
@@ -398,7 +404,7 @@ h2#start-placing-title {
 #coord-submit:hover {
 	bottom: 3px;
 	right: 3px;
-	box-shadow: 7px 7px black;
+	box-shadow: 4px 4px black;
 	transition: all 200ms ease;
 }
 
@@ -471,8 +477,8 @@ h2#start-placing-title {
 
 .star {
 	position: absolute;
-	width: 850px;
-	height: 850px;
+	width: 100%;
+	height: 100%;
 	background-repeat: no-repeat;
 	background-position: center;
 }
@@ -480,18 +486,19 @@ h2#start-placing-title {
 .star-1 {
 	background-image: url(./assets/star-blue.svg);
 	bottom: -250px;
-	right: -300px;
+	right: -500px;
 }
 .star-2 {
 	background-image: url(./assets/star-red.svg);
-	right: 480px;
-	bottom: -350px;
+	right: -250px;
+	bottom: -140px;
+	z-index: 1;
 }
 
 .star-3 {
 	background-image: url(./assets/star-green.svg);
 	right: 50px;
-	bottom: -180px;
+	bottom: -300px;
 }
 
 /* BATTLE PAGE */
@@ -512,15 +519,17 @@ h2#start-placing-title {
 }
 
 #attack-title {
-	padding: 15px 25px;
+	align-self: flex-start;
+	width: 98%;
+	box-sizing: border-box;
 }
 
 .battle-sidebar-container {
 	display: flex;
 	justify-content: center;
 	padding-top: 80px;
+	padding-bottom: 20px;
 	width: 100%;
-	height: 40%;
 }
 
 .battle-sidebar-container ol {
@@ -545,8 +554,8 @@ h2#start-placing-title {
 }
 
 .cell-example {
-	width: 50px;
-	height: 50px;
+	width: 40px;
+	height: 40px;
 	background: white;
 	box-shadow: 3px 3px black;
 	border: 3px solid black;
@@ -602,10 +611,8 @@ h2#start-placing-title {
 #player-gameboard,
 #opponent-gameboard {
 	display: grid;
-	grid-template-columns: repeat(10, 70px);
-	grid-template-rows: repeat(10, 70px);
-	width: 700px;
-	height: 700px;
+	grid-template-columns: repeat(10, 60px);
+	grid-template-rows: repeat(10, 60px);
 }
 
 #player-gameboard.hide,
@@ -626,11 +633,11 @@ h2#start-placing-title {
 	align-items: center;
 	background: white;
 	box-shadow: 3px 3px black;
-	border: 3px solid black;
+	border: 2px solid black;
 	border-radius: 10px;
 	box-sizing: border-box;
 	font-family: "Inter", Arial, Helvetica, sans-serif;
-	font-size: 1.2rem;
+	font-size: 1rem;
 	color: var(--ocean-blue);
 	font-weight: 600;
 	cursor: pointer;
