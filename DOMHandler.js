@@ -90,4 +90,8 @@ export class DOMHandler {
 		});
 		pageToShow.classList.remove("hide");
 	}
+
+	updateTitle(element, message) {
+		element.textContent = message;
+	}
 }

@@ -51,9 +51,6 @@ restartGameBtn.addEventListener("click", () => {
 });
 
 function startGame() {
-	// Remove boards elements
-	gameboardsContainer.textContent = "";
-
 	// Creating Dom handler
 	domHandler = new DOMHandler();
 
@@ -73,7 +70,7 @@ function startGame() {
 	player1.gameboard.boardElement = playerBoard1;
 	player2.gameboard.boardElement = playerBoard2;
 
-	updateTitle(
+	domHandler.updateTitle(
 		startPlacingTitle,
 		`${currentPlayer.name}, get your ships ready! `
 	);
@@ -87,7 +84,7 @@ function startGame() {
 			"#current-placing-gameboard"
 		);
 
-		updateTitle(
+		domHandler.updateTitle(
 			startPlacingTitle,
 			`${currentPlayer.name}, get your ships ready!`
 		);
@@ -114,7 +111,7 @@ function startGame() {
 				// Swap turns when first player finished placing its ships.
 				swapTurns();
 
-				updateTitle(
+				domHandler.updateTitle(
 					startPlacingTitle,
 					`${currentPlayer.name}, get your ships ready!`
 				);
@@ -132,7 +129,7 @@ function startGame() {
 
 		moveBoard(currentPlayer.gameboard.boardElement, currentPlaceGameboard);
 
-		updateTitle(
+		domHandler.updateTitle(
 			setCoordinatesTitle,
 			`${currentPlayer.name}, Deploy your fleet!`
 		);
@@ -140,7 +137,10 @@ function startGame() {
 	}
 
 	function startBattlePhase() {
-		updateTitle(passDeviceTitle, `${currentPlayer.name}, Attack!`);
+		domHandler.updateTitle(
+			passDeviceTitle,
+			`${currentPlayer.name}, Attack!`
+		);
 
 		domHandler.showPage(passDevicePage);
 
@@ -160,7 +160,7 @@ function startGame() {
 		passDeviceBtn.addEventListener("click", passDevice);
 
 		function passDevice() {
-			updateTitle(
+			domHandler.updateTitle(
 				attackTitle,
 				`Click a cell to attack ${currentOpponent.name}'s board!`
 			);
@@ -180,7 +180,7 @@ function startGame() {
 
 				if (result == "miss") {
 					swapTurns();
-					updateTitle(
+					domHandler.updateTitle(
 						passDeviceTitle,
 						`${currentPlayer.name}, Attack!`
 					);
@@ -203,10 +203,6 @@ function startGame() {
 
 	function moveBoard(board, container) {
 		container.appendChild(board);
-	}
-
-	function updateTitle(element, message) {
-		element.textContent = message;
 	}
 
 	function swapTurns() {
@@ -330,5 +326,8 @@ function restartValues() {
 	player2 = undefined;
 	currentPlayer = undefined;
 	currentOpponent = undefined;
+
+	// Remove boards elements
+	gameboardsContainer.textContent = "";
 	startPlacingBtn.removeEventListener("click", startPlacingListener);
 }
