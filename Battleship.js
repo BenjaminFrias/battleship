@@ -22,12 +22,12 @@ const setCoordinatesTitle = document.querySelector("#set-coordinates-title");
 const passDeviceTitle = document.querySelector("#pass-device-title");
 const attackTitle = document.querySelector("#attack-title");
 
-// TODO: Fix bug: can place ships in coords with ships.
+// TODO: Refactor: Try to move every gameboard function to gameboard
+
+// TODO: Feature: validate coords to return different errors to show to the user
 // TODO: Feature: Drag and Drop feature for placing ships.
 // TODO: Feature: Ships' graveyard.
 // TODO: Feature: vs computer gameplay.
-// TODO: Refactor validate coords to return different errors to show to the user
-// TODO: REFACTOR: Try to move every gameboard function to gameboard
 
 let domHandler;
 let player1;

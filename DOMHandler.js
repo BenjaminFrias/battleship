@@ -85,13 +85,10 @@ export class DOMHandler {
 	}
 
 	showPage(pageToShow) {
-		for (let page of this.pages) {
-			if (page === pageToShow) {
-				this.showElement(pageToShow);
-			} else {
-				this.hideElement(page);
-			}
-		}
+		this.pages.forEach((page) => {
+			page.classList.add("hide");
+		});
+		pageToShow.classList.remove("hide");
 	}
 
 	hideElement(element) {

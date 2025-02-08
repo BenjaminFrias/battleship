@@ -57,13 +57,13 @@ export class Gameboard {
 	}
 
 	validateCoordinates(coordinates, mustLength) {
-		// if (!coordinates) {
-		// 	return false;
-		// }
+		if (!coordinates) {
+			return false;
+		}
 
-		// // if (typeof coordinates != "string") {
-		// // 	return false;
-		// // }
+		if (typeof coordinates != "string") {
+			return false;
+		}
 
 		if (coordinates.includes(",")) {
 			const splittedCoords = coordinates
