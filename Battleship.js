@@ -50,25 +50,33 @@ restartGameBtn.addEventListener("click", () => {
 	startGame();
 });
 
-function startGame() {
+function initializeGame() {
 	// Creating Dom handler
 	domHandler = new DOMHandler();
 
-	// Switch start game to placement page
-	domHandler.showPage(placeShipsPage);
+	// Create gameboards
 	domHandler.createGameboards();
 
 	// Creating players
 	player1 = new Player(1, "P1", new Gameboard());
 	player2 = new Player(2, "P2", new Gameboard());
+
+	// Set current players
 	currentPlayer = player1;
 	currentOpponent = player2;
 
+	// Get every player's gameboard and assign it to each.
 	const playerBoard1 = document.querySelector("#player-gameboard");
 	const playerBoard2 = document.querySelector("#opponent-gameboard");
-
 	player1.gameboard.boardElement = playerBoard1;
 	player2.gameboard.boardElement = playerBoard2;
+}
+
+function startGame() {
+	initializeGame();
+
+	// Switch start game to placement page
+	domHandler.showPage(placeShipsPage);
 
 	domHandler.updateTitle(
 		startPlacingTitle,
