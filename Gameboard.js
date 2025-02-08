@@ -6,28 +6,19 @@ export class Gameboard {
 	}
 
 	placeShip(ship, shipCoords) {
-		const coordsToPlace = [];
-		let coordsError = false;
 		for (let i = 0; i < shipCoords.length; i++) {
 			const singleCoordinate = shipCoords[i];
 			const singleCoorString = singleCoordinate.toString();
 
 			if (!this.board.has(singleCoorString)) {
-				coordsToPlace.push({ singleCoorString, ship });
+				this.board.set(singleCoorString, ship);
 			} else {
-				coordsError = true;
-				break;
-			}
-		}
+				// TODO: Do something to avoid placing a ship.
 
-		if (coordsError == false) {
-			for (let obj of coordsToPlace) {
-				this.board.set(obj.singleCoorString, obj.ship);
+				alert("You already place a ship");
 			}
-			this.ships.push({ ship: ship, coords: shipCoords });
-		} else {
-			alert("You already place a ship");
 		}
+		this.ships.push({ ship: ship, coords: shipCoords });
 	}
 
 	destroyShip(player, board, ship) {
@@ -90,6 +81,12 @@ export class Gameboard {
 				return false;
 			}
 
+			// Check for repeated values;
+			const repeatedCoords = hasRepeatedCoords(splittedCoords);
+			if (repeatedCoords) {
+				return false;
+			}
+
 			const areCoordsValid = splittedCoords.every((coord) =>
 				validateSingleCoord(coord)
 			);
@@ -104,8 +101,21 @@ export class Gameboard {
 		return true;
 
 		function validateSingleCoord(coord) {
+			// TODO: Validate if a coordinate exist in board.
 			const singleCoordRegex = /^[a-j](?:[1-9]|10)$/i;
 			return singleCoordRegex.test(coord);
+		}
+
+		function hasRepeatedCoords(coords) {
+			for (let i = 0; i < coords.length - 1; i++) {
+				for (let j = i + 1; j < coords.length; j++) {
+					if (coords[i] == coords[j]) {
+						// Coordinate has repeated values
+						return true;
+					}
+				}
+			}
+			return false;
 		}
 	}
 

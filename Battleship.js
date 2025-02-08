@@ -278,7 +278,7 @@ async function handlePlaceShip(player) {
 }
 
 function createShips() {
-	const SHIPLENGTHS = [1];
+	const SHIPLENGTHS = [2, 1];
 	const ships = [];
 
 	for (let i in SHIPLENGTHS) {
