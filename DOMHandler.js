@@ -90,12 +90,4 @@ export class DOMHandler {
 		});
 		pageToShow.classList.remove("hide");
 	}
-
-	hideElement(element) {
-		element.classList.add("hide");
-	}
-
-	showElement(element) {
-		element.classList.remove("hide");
-	}
 }
