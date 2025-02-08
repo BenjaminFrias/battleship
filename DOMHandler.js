@@ -84,14 +84,19 @@ export class DOMHandler {
 		}
 	}
 
-	showPage(pageToShow) {
+	showPageWithTitle(pageToShow, playerName) {
 		this.pages.forEach((page) => {
-			page.classList.add("hide");
-		});
-		pageToShow.classList.remove("hide");
-	}
+			if (page == pageToShow) {
+				pageToShow.classList.remove("hide");
 
-	updateTitle(element, message) {
-		element.textContent = message;
+				const playerTitle =
+					pageToShow.querySelector("span.player-name");
+				if (playerTitle) {
+					playerTitle.textContent = playerName;
+				}
+			} else {
+				page.classList.add("hide");
+			}
+		});
 	}
 }

@@ -15,8 +15,6 @@
 	<body>
 		<div class="container">
 			<div id="main-game-container">
-				<h2 id="current-phase-title" class="hide"></h2>
-
 				<div id="start-game-page" class="page">
 					<div class="cannonball-1"></div>
 					<div class="cannonball-2"></div>
@@ -31,7 +29,10 @@
 				<!-- Placement pages -->
 				<div id="start-placing-page" class="page hide">
 					<div id="start-placing-content">
-						<h2 id="start-placing-title"></h2>
+						<h2 id="start-placing-title">
+							<span class="player-name"></span>
+							, get your ships ready!
+						</h2>
 						<button id="start-placing-btn">Place ships</button>
 						<div id="decorative-place-ship"></div>
 					</div>
@@ -39,10 +40,10 @@
 
 				<div id="set-coordinates-page" class="page hide">
 					<div class="sidebar coordinates-sidebar">
-						<h2
-							id="set-coordinates-title"
-							class="sidebar-title"
-						></h2>
+						<h2 id="set-coordinates-title" class="sidebar-title">
+							<span class="player-name"></span>
+							, Deploy your fleet!
+						</h2>
 						<div class="sidebar-container sidebar-coords-container">
 							<div id="placement-rules">
 								<h3>Ship Placement Rules:</h3>
@@ -84,7 +85,10 @@
 				<!-- Gameboards -->
 				<div id="pass-device-page" class="page hide">
 					<div id="pass-device-content">
-						<h2 id="pass-device-title"></h2>
+						<h2 id="pass-device-title">
+							<span class="player-name"></span>
+							, Attack!
+						</h2>
 						<button id="pass-btn">Attack!</button>
 						<div class="star star-1"></div>
 						<div class="star star-2"></div>
@@ -94,7 +98,11 @@
 
 				<div id="battle-page" class="page hide">
 					<div id="battle-sidebar" class="sidebar">
-						<h2 id="attack-title" class="sidebar-title"></h2>
+						<h2 id="attack-title" class="sidebar-title">
+							Click a cell to attack
+							<span class="player-name"></span>
+							' board!
+						</h2>
 						<div class="sidebar-container battle-sidebar-container">
 							<ol>
 								<li>
@@ -117,7 +125,9 @@
 
 				<!-- Winner and Restart page -->
 				<div id="winner-page" class="page hide">
-					<h2 id="winner-title"></h2>
+					<h2 id="winner-title">
+						<span class="player-name"></span> WON!
+					</h2>
 					<div class="winner-options-container">
 						<button id="return-home-btn">Home</button>
 						<button id="restart-game-btn">Play again</button>

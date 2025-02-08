@@ -43,7 +43,7 @@ startGameBtn.addEventListener("click", () => {
 });
 
 returnHomeBtn.addEventListener("click", () => {
-	domHandler.showPage(startGamePage);
+	domHandler.showPageWithTitle(startGamePage);
 });
 
 restartGameBtn.addEventListener("click", () => {
@@ -80,22 +80,14 @@ function initializeGame() {
 function startGame() {
 	initializeGame();
 
-	// Switch start game to placement page
-	domHandler.showPage(placeShipsPage);
+	// Placement phase
 
-	domHandler.updateTitle(
-		startPlacingTitle,
-		`${currentPlayer.name}, get your ships ready! `
-	);
+	domHandler.showPageWithTitle(placeShipsPage, currentPlayer.name);
 }
 
 async function startPlacingPhase() {
 	moveBoard(currentPlayer.gameboard.boardElement, currentPlaceGameboard);
-	domHandler.showPage(setCoordsPage);
-	domHandler.updateTitle(
-		setCoordinatesTitle,
-		`${currentPlayer.name}, Deploy your fleet!`
-	);
+	domHandler.showPageWithTitle(setCoordsPage, currentPlayer.name);
 
 	// Manage placing players' turns
 	await handlePlaceShip(currentPlayer);
@@ -106,11 +98,7 @@ async function startPlacingPhase() {
 		startBattlePhase();
 	} else {
 		swapTurns();
-		domHandler.showPage(placeShipsPage);
-		domHandler.updateTitle(
-			startPlacingTitle,
-			`${currentPlayer.name}, get your ships ready!`
-		);
+		domHandler.showPageWithTitle(placeShipsPage, currentPlayer.name);
 		moveBoard(currentPlayer.gameboard.boardElement, currentPlaceGameboard);
 	}
 
@@ -120,9 +108,7 @@ async function startPlacingPhase() {
 }
 
 function startBattlePhase() {
-	domHandler.updateTitle(passDeviceTitle, `${currentPlayer.name}, Attack!`);
-
-	domHandler.showPage(passDevicePage);
+	domHandler.showPageWithTitle(passDevicePage, currentPlayer.name);
 
 	// Remove all ships classes from boards
 	domHandler.toggleShips(
@@ -140,13 +126,8 @@ function startBattlePhase() {
 	passDeviceBtn.addEventListener("click", passDevice);
 
 	function passDevice() {
-		domHandler.updateTitle(
-			attackTitle,
-			`Click a cell to attack ${currentOpponent.name}'s board!`
-		);
-
+		domHandler.showPageWithTitle(battlePage, currentOpponent.name);
 		domHandler.showGameboard(currentOpponent.id);
-		domHandler.showPage(battlePage);
 	}
 
 	// handle attack for every cell
@@ -159,11 +140,11 @@ function startBattlePhase() {
 			// Remove text content when user attacks
 			if (result == "miss") {
 				swapTurns();
-				domHandler.updateTitle(
-					passDeviceTitle,
-					`${currentPlayer.name}, Attack!`
+
+				domHandler.showPageWithTitle(
+					passDevicePage,
+					currentPlayer.name
 				);
-				domHandler.showPage(passDevicePage);
 			} else if (result == "gameOver") {
 				gameOver();
 			} else if (result == "prevShoot") {
@@ -175,9 +156,7 @@ function startBattlePhase() {
 
 function gameOver() {
 	const winner = currentPlayer;
-	const winnerTitle = document.querySelector("#winner-title");
-	winnerTitle.textContent = `${winner.name} won!`;
-	domHandler.showPage(winnerPage);
+	domHandler.showPageWithTitle(winnerPage, winner.name);
 }
 
 function swapTurns() {
