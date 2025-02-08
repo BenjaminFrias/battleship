@@ -40,8 +40,8 @@ export class DOMHandler {
 		}
 	}
 
-	showGameboard(playerName) {
-		if (playerName == "P1") {
+	showGameboard(playerID) {
+		if (playerID == 1) {
 			this.playerGameboard.classList.remove("hide");
 			this.opponentGameboard.classList.add("hide");
 		} else {
@@ -50,13 +50,13 @@ export class DOMHandler {
 		}
 	}
 
-	toggleShips(playerName, board, action) {
+	toggleShips(playerID, board, action) {
 		let cells;
-		if (playerName === "P1") {
+		if (playerID === 1) {
 			cells = document.querySelectorAll(
 				".container #player-gameboard > .board-cell"
 			);
-		} else if (playerName === "P2") {
+		} else if (playerID === 2) {
 			cells = document.querySelectorAll(
 				".container #opponent-gameboard > .board-cell"
 			);

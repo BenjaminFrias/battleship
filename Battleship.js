@@ -62,8 +62,8 @@ function startGame() {
 	domHandler.createGameboards();
 
 	// Creating players
-	player1 = new Player("P1", new Gameboard());
-	player2 = new Player("P2", new Gameboard());
+	player1 = new Player(1, "P1", new Gameboard());
+	player2 = new Player(2, "P2", new Gameboard());
 	currentPlayer = player1;
 	currentOpponent = player2;
 
@@ -146,13 +146,13 @@ function startGame() {
 
 		// Remove all ships classes from boards
 		domHandler.toggleShips(
-			currentOpponent.name,
+			currentOpponent.id,
 			currentOpponent.gameboard.board,
 			"remove"
 		);
 
 		domHandler.toggleShips(
-			currentPlayer.name,
+			currentPlayer.id,
 			currentPlayer.gameboard.board,
 			"remove"
 		);
@@ -165,7 +165,7 @@ function startGame() {
 				`Click a cell to attack ${currentOpponent.name}'s board!`
 			);
 
-			domHandler.showGameboard(currentOpponent.name);
+			domHandler.showGameboard(currentOpponent.id);
 			domHandler.showPage(battlePage);
 		}
 
@@ -252,7 +252,7 @@ async function handlePlaceShip(player) {
 				// Place ship and continue placement
 				player.gameboard.placeShip(ship, transformedCoords);
 				domHandler.toggleShips(
-					player.name,
+					player.id,
 					player.gameboard.board,
 					"add"
 				);
