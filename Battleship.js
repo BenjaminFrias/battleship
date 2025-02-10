@@ -51,6 +51,85 @@ restartGameBtn.addEventListener("click", () => {
 	startGame();
 });
 
+class GameManager {
+	constructor() {
+		this.domHandler = null;
+		this.player1 = null;
+		this.player2 = null;
+		this.currentPlayer = player1;
+		this.currentOpponent = player2;
+		this.startPlacingListener = null;
+	}
+
+	initializeGame() {
+		// Creating Dom handler
+		this.domHandler = new DOMHandler();
+
+		// Create gameboards
+		this.domHandler.createGameboards();
+
+		// Creating players
+		this.player1 = new Player(1, "P1", new Gameboard());
+		this.player2 = new Player(2, "P2", new Gameboard());
+
+		// Set current players
+		this.currentPlayer = this.player1;
+		this.currentOpponent = this.player2;
+
+		// Get every player's gameboard and assign it to each.
+		const playerBoard1 = document.querySelector("#player-gameboard");
+		const playerBoard2 = document.querySelector("#opponent-gameboard");
+		this.player1.gameboard.boardElement = playerBoard1;
+		this.player2.gameboard.boardElement = playerBoard2;
+
+		// Add event listener to start placing btn
+		this.startPlacingListener = startPlacingPhase;
+		startPlacingBtn.addEventListener("click", this.startPlacingListener);
+	}
+
+	async startPlacingPhase() {
+		// move board and show title
+		moveBoard(currentPlayer.gameboard.boardElement, currentPlaceGameboard);
+		domHandler.showPageWithTitle(setCoordsPage, currentPlayer.name);
+
+		// Manage placing players' turns
+		await handlePlaceShip(currentPlayer);
+
+		moveBoard(currentPlayer.gameboard.boardElement, gameboardsContainer);
+
+		// Handle placement turns
+		if (currentPlayer == player2) {
+			// If player 2 placed their ships, move to next phase
+			swapTurns();
+			startBattlePhase();
+		} else {
+			// If player 1 placed ships, let player2 place their ships.
+			swapTurns();
+			domHandler.showPageWithTitle(placeShipsPage, currentPlayer.name);
+			moveBoard(
+				currentPlayer.gameboard.boardElement,
+				currentPlaceGameboard
+			);
+		}
+
+		function moveBoard(board, container) {
+			container.appendChild(board);
+		}
+	}
+
+	gameOverPhase() {
+		const winner = currentPlayer;
+		this.domHandler.showPageWithTitle(winnerPage, winner.name);
+	}
+
+	swapTurns() {
+		[this.currentPlayer, this.currentOpponent] = [
+			this.currentOpponent,
+			this.currentPlayer,
+		];
+	}
+}
+
 function initializeGame() {
 	// Creating Dom handler
 	domHandler = new DOMHandler();
@@ -81,11 +160,11 @@ function startGame() {
 	initializeGame();
 
 	// Placement phase
-
 	domHandler.showPageWithTitle(placeShipsPage, currentPlayer.name);
 }
 
 async function startPlacingPhase() {
+	// move board and show title
 	moveBoard(currentPlayer.gameboard.boardElement, currentPlaceGameboard);
 	domHandler.showPageWithTitle(setCoordsPage, currentPlayer.name);
 
