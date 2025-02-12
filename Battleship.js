@@ -66,7 +66,10 @@ class GameManager {
 	}
 
 	startGame() {
+		this.resetGame();
 		this.initializeGame();
+
+		// TODO: orchestrade game flow
 
 		// Placement phase
 		this.domHandler.showPageWithTitle(
@@ -292,7 +295,8 @@ class GameManager {
 		this.domHandler.showPageWithTitle(winnerPage, winner.name);
 	}
 
-	restartValues() {
+	resetGame() {
+		// Reset game properties
 		this.domHandler = null;
 		this.player1 = null;
 		this.player2 = null;
@@ -301,6 +305,8 @@ class GameManager {
 
 		// Remove boards elements
 		gameboardsContainer.textContent = "";
+
+		// Remove event listeners
 		startPlacingBtn.removeEventListener("click", this.startPlacingListener);
 
 		coordSubmitBtn.removeEventListener(
@@ -323,16 +329,6 @@ class GameManager {
 
 const Game = new GameManager();
 
-startGameBtn.addEventListener("click", () => {
-	Game.restartValues();
-	Game.startGame();
-});
-
-returnHomeBtn.addEventListener("click", () => {
-	Game.returnHome();
-});
-
-restartGameBtn.addEventListener("click", () => {
-	Game.restartValues();
-	Game.startGame();
-});
+startGameBtn.addEventListener("click", Game.startGame.bind(Game));
+restartGameBtn.addEventListener("click", Game.startGame.bind(Game));
+returnHomeBtn.addEventListener("click", Game.returnHome.bind(Game));
