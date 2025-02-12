@@ -17,10 +17,8 @@ const restartGameBtn = document.querySelector("#restart-game-btn");
 const returnHomeBtn = document.querySelector("#return-home-btn");
 const startPlacingBtn = document.querySelector("#start-placing-btn");
 const shipLengthTitle = document.querySelector("#ship-length");
-const startPlacingTitle = document.querySelector("#start-placing-title");
-const setCoordinatesTitle = document.querySelector("#set-coordinates-title");
-const passDeviceTitle = document.querySelector("#pass-device-title");
-const attackTitle = document.querySelector("#attack-title");
+const coordInput = coordsContainer.querySelector("#coord-input");
+const coordSubmitBtn = coordsContainer.querySelector("#coord-submit");
 const currentPlaceGameboard = document.querySelector(
 	"#current-placing-gameboard"
 );
@@ -61,13 +59,10 @@ class GameManager {
 		this.player1.gameboard.boardElement = playerBoard1;
 		this.player2.gameboard.boardElement = playerBoard2;
 
-		// TODO: fix the this thing in start placing phase
 		// Add event listener to start placing btn
-		this.startPlacingListener = this.startPlacingPhase;
-		startPlacingBtn.addEventListener(
-			"click",
-			this.startPlacingListener.bind(this)
-		);
+
+		this.startPlacingListener = this.startPlacingPhase.bind(this);
+		startPlacingBtn.addEventListener("click", this.startPlacingListener);
 	}
 
 	startGame() {
@@ -124,13 +119,10 @@ class GameManager {
 
 	async handlePlaceShip(player) {
 		const ships = this.createShips();
-		const coordInput = coordsContainer.querySelector("#coord-input");
-		const coordSubmitBtn = coordsContainer.querySelector("#coord-submit");
 
 		for (let ship of ships) {
 			shipLengthTitle.textContent = `Next ship length: ${ship.length} squares!`;
 
-			let shipsCount = 0;
 			let resolveCoordinates;
 
 			// Create promise for async input
@@ -138,61 +130,14 @@ class GameManager {
 				resolveCoordinates = resolve;
 			});
 
-			function handleCoordInput() {
-				console.log("placing");
+			// Set handleCoordInputListener to the function
+			this.handleCoordInputListener = this.handleCoordInput.bind(
+				this,
+				player,
+				ship,
+				resolveCoordinates
+			);
 
-				const coordResult = player.gameboard.validateCoordinates(
-					coordInput.value,
-					ship.length
-				);
-
-				// If coordinate is correct, place ship
-				if (coordResult) {
-					const splittedCoords = coordInput.value
-						.split(",")
-						.filter((item) => item != "")
-						.join(",");
-
-					const transformedCoords =
-						player.gameboard.transformCoordinates(splittedCoords);
-
-					shipsCount++;
-
-					// Place ship and continue placement
-					player.gameboard.placeShip(ship, transformedCoords);
-
-					this.domHandler.toggleShips(
-						player.id,
-						player.gameboard.board,
-						"add"
-					);
-					resolveCoordinates(transformedCoords);
-
-					// Remove event listener and avoid creating several ones
-					// coordSubmitBtn.removeEventListener(
-					// 	"click",
-					// 	handleCoordInput.bind(this)
-					// );
-
-					coordSubmitBtn.removeEventListener(
-						"click",
-						this.handleCoordInputListener
-					);
-
-					coordInput.value = "";
-				} else {
-					alert("Invalid coordinate.");
-					coordInput.value = "";
-				}
-			}
-
-			// If there are ships left, continue and log message
-			if (!shipsCount === ships.length) {
-				console.log("Keep writing your ships' coordinates:");
-				console.log("Next Ship length: " + ship.length);
-			}
-
-			this.handleCoordInputListener = handleCoordInput.bind(this);
 			coordSubmitBtn.addEventListener(
 				"click",
 				this.handleCoordInputListener
@@ -200,11 +145,51 @@ class GameManager {
 
 			// Wait until the current ship is placed
 			await coordinatePromise;
+
+			coordSubmitBtn.removeEventListener(
+				"click",
+				this.handleCoordInputListener
+			);
+		}
+	}
+
+	handleCoordInput(player, ship, resolveCoordinates) {
+		const coordResult = player.gameboard.validateCoordinates(
+			coordInput.value,
+			ship.length
+		);
+
+		// If coordinate is correct, place ship
+		if (coordResult) {
+			const splittedCoords = coordInput.value
+				.split(",")
+				.filter((item) => item != "")
+				.join(",");
+
+			const transformedCoords =
+				player.gameboard.transformCoordinates(splittedCoords);
+
+			// Place ship and continue placement
+			player.gameboard.placeShip(ship, transformedCoords);
+
+			this.domHandler.toggleShips(
+				player.id,
+				player.gameboard.board,
+				"add"
+			);
+			resolveCoordinates(transformedCoords);
+			coordInput.value = "";
+		} else {
+			alert("Invalid coordinate.");
+			coordInput.value = "";
 		}
 	}
 
 	startBattlePhase() {
-		this.domHandler.showPageWithTitle(passDevicePage, currentPlayer.name);
+		this.domHandler.showPageWithTitle(
+			passDevicePage,
+			this.currentPlayer.name
+		);
 
 		// Remove all ships classes from boards
 		this.domHandler.toggleShips(
@@ -219,7 +204,7 @@ class GameManager {
 			"remove"
 		);
 
-		passDeviceBtn.addEventListener("click", passDevice);
+		passDeviceBtn.addEventListener("click", passDevice.bind(this));
 
 		function passDevice() {
 			this.domHandler.showPageWithTitle(
@@ -234,7 +219,7 @@ class GameManager {
 		cells.forEach((cell) => {
 			cell.textContent = "";
 			cell.addEventListener("click", () => {
-				const result = handleAttack(cell);
+				const result = this.handleAttack(cell);
 
 				// Remove text content when user attacks
 				if (result == "miss") {
@@ -303,7 +288,7 @@ class GameManager {
 	}
 
 	gameOver() {
-		const winner = currentPlayer;
+		const winner = this.currentPlayer;
 		this.domHandler.showPageWithTitle(winnerPage, winner.name);
 	}
 
@@ -313,11 +298,15 @@ class GameManager {
 		this.player2 = null;
 		this.currentPlayer = this.player1;
 		this.currentOpponent = this.player2;
-		this.startPlacingListener = null;
 
 		// Remove boards elements
 		gameboardsContainer.textContent = "";
 		startPlacingBtn.removeEventListener("click", this.startPlacingListener);
+
+		coordSubmitBtn.removeEventListener(
+			"click",
+			this.handleCoordInputListener
+		);
 	}
 
 	returnHome() {
