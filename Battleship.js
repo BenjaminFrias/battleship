@@ -37,6 +37,7 @@ class GameManager {
 		this.currentPlayer = this.player1;
 		this.currentOpponent = this.player2;
 		this.startPlacingListener = null;
+		this.handleCoordInputListener = null;
 	}
 
 	initializeGame() {
@@ -138,6 +139,8 @@ class GameManager {
 			});
 
 			function handleCoordInput() {
+				console.log("placing");
+
 				const coordResult = player.gameboard.validateCoordinates(
 					coordInput.value,
 					ship.length
@@ -157,6 +160,7 @@ class GameManager {
 
 					// Place ship and continue placement
 					player.gameboard.placeShip(ship, transformedCoords);
+
 					this.domHandler.toggleShips(
 						player.id,
 						player.gameboard.board,
@@ -165,23 +169,34 @@ class GameManager {
 					resolveCoordinates(transformedCoords);
 
 					// Remove event listener and avoid creating several ones
+					// coordSubmitBtn.removeEventListener(
+					// 	"click",
+					// 	handleCoordInput.bind(this)
+					// );
+
 					coordSubmitBtn.removeEventListener(
 						"click",
-						handleCoordInput
+						this.handleCoordInputListener
 					);
 
-					// If there are ships left, continue and log message
-					if (!shipsCount === ships.length) {
-						console.log("Keep writing your ships' coordinates:");
-						console.log("Next Ship length: " + ship.length);
-					}
 					coordInput.value = "";
 				} else {
 					alert("Invalid coordinate.");
 					coordInput.value = "";
 				}
 			}
-			coordSubmitBtn.addEventListener("click", handleCoordInput);
+
+			// If there are ships left, continue and log message
+			if (!shipsCount === ships.length) {
+				console.log("Keep writing your ships' coordinates:");
+				console.log("Next Ship length: " + ship.length);
+			}
+
+			this.handleCoordInputListener = handleCoordInput.bind(this);
+			coordSubmitBtn.addEventListener(
+				"click",
+				this.handleCoordInputListener
+			);
 
 			// Wait until the current ship is placed
 			await coordinatePromise;
