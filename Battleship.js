@@ -29,35 +29,13 @@ const currentPlaceGameboard = document.querySelector(
 // TODO: Feature: Drag and Drop feature for placing ships.
 // TODO: Feature: Ships' graveyard.
 // TODO: Feature: vs computer gameplay.
-
-let domHandler;
-let player1;
-let player2;
-let currentPlayer;
-let currentOpponent;
-let startPlacingListener;
-
-startGameBtn.addEventListener("click", () => {
-	restartValues();
-	startGame();
-});
-
-returnHomeBtn.addEventListener("click", () => {
-	domHandler.showPageWithTitle(startGamePage);
-});
-
-restartGameBtn.addEventListener("click", () => {
-	restartValues();
-	startGame();
-});
-
 class GameManager {
 	constructor() {
 		this.domHandler = null;
 		this.player1 = null;
 		this.player2 = null;
-		this.currentPlayer = player1;
-		this.currentOpponent = player2;
+		this.currentPlayer = this.player1;
+		this.currentOpponent = this.player2;
 		this.startPlacingListener = null;
 	}
 
@@ -82,32 +60,58 @@ class GameManager {
 		this.player1.gameboard.boardElement = playerBoard1;
 		this.player2.gameboard.boardElement = playerBoard2;
 
+		// TODO: fix the this thing in start placing phase
 		// Add event listener to start placing btn
-		this.startPlacingListener = startPlacingPhase;
-		startPlacingBtn.addEventListener("click", this.startPlacingListener);
+		this.startPlacingListener = this.startPlacingPhase;
+		startPlacingBtn.addEventListener(
+			"click",
+			this.startPlacingListener.bind(this)
+		);
+	}
+
+	startGame() {
+		this.initializeGame();
+
+		// Placement phase
+		this.domHandler.showPageWithTitle(
+			placeShipsPage,
+			this.currentPlayer.name
+		);
 	}
 
 	async startPlacingPhase() {
 		// move board and show title
-		moveBoard(currentPlayer.gameboard.boardElement, currentPlaceGameboard);
-		domHandler.showPageWithTitle(setCoordsPage, currentPlayer.name);
+		moveBoard(
+			this.currentPlayer.gameboard.boardElement,
+			currentPlaceGameboard
+		);
+		this.domHandler.showPageWithTitle(
+			setCoordsPage,
+			this.currentPlayer.name
+		);
 
 		// Manage placing players' turns
-		await handlePlaceShip(currentPlayer);
+		await this.handlePlaceShip(this.currentPlayer);
 
-		moveBoard(currentPlayer.gameboard.boardElement, gameboardsContainer);
+		moveBoard(
+			this.currentPlayer.gameboard.boardElement,
+			gameboardsContainer
+		);
 
 		// Handle placement turns
-		if (currentPlayer == player2) {
+		if (this.currentPlayer == this.player2) {
 			// If player 2 placed their ships, move to next phase
-			swapTurns();
-			startBattlePhase();
+			this.swapTurns();
+			this.startBattlePhase();
 		} else {
 			// If player 1 placed ships, let player2 place their ships.
-			swapTurns();
-			domHandler.showPageWithTitle(placeShipsPage, currentPlayer.name);
+			this.swapTurns();
+			this.domHandler.showPageWithTitle(
+				placeShipsPage,
+				this.currentPlayer.name
+			);
 			moveBoard(
-				currentPlayer.gameboard.boardElement,
+				this.currentPlayer.gameboard.boardElement,
 				currentPlaceGameboard
 			);
 		}
@@ -117,9 +121,192 @@ class GameManager {
 		}
 	}
 
-	gameOverPhase() {
+	async handlePlaceShip(player) {
+		const ships = this.createShips();
+		const coordInput = coordsContainer.querySelector("#coord-input");
+		const coordSubmitBtn = coordsContainer.querySelector("#coord-submit");
+
+		for (let ship of ships) {
+			shipLengthTitle.textContent = `Next ship length: ${ship.length} squares!`;
+
+			let shipsCount = 0;
+			let resolveCoordinates;
+
+			// Create promise for async input
+			const coordinatePromise = new Promise((resolve) => {
+				resolveCoordinates = resolve;
+			});
+
+			function handleCoordInput() {
+				const coordResult = player.gameboard.validateCoordinates(
+					coordInput.value,
+					ship.length
+				);
+
+				// If coordinate is correct, place ship
+				if (coordResult) {
+					const splittedCoords = coordInput.value
+						.split(",")
+						.filter((item) => item != "")
+						.join(",");
+
+					const transformedCoords =
+						player.gameboard.transformCoordinates(splittedCoords);
+
+					shipsCount++;
+
+					// Place ship and continue placement
+					player.gameboard.placeShip(ship, transformedCoords);
+					this.domHandler.toggleShips(
+						player.id,
+						player.gameboard.board,
+						"add"
+					);
+					resolveCoordinates(transformedCoords);
+
+					// Remove event listener and avoid creating several ones
+					coordSubmitBtn.removeEventListener(
+						"click",
+						handleCoordInput
+					);
+
+					// If there are ships left, continue and log message
+					if (!shipsCount === ships.length) {
+						console.log("Keep writing your ships' coordinates:");
+						console.log("Next Ship length: " + ship.length);
+					}
+					coordInput.value = "";
+				} else {
+					alert("Invalid coordinate.");
+					coordInput.value = "";
+				}
+			}
+			coordSubmitBtn.addEventListener("click", handleCoordInput);
+
+			// Wait until the current ship is placed
+			await coordinatePromise;
+		}
+	}
+
+	startBattlePhase() {
+		this.domHandler.showPageWithTitle(passDevicePage, currentPlayer.name);
+
+		// Remove all ships classes from boards
+		this.domHandler.toggleShips(
+			this.currentOpponent.id,
+			this.currentOpponent.gameboard.board,
+			"remove"
+		);
+
+		this.domHandler.toggleShips(
+			this.currentPlayer.id,
+			this.currentPlayer.gameboard.board,
+			"remove"
+		);
+
+		passDeviceBtn.addEventListener("click", passDevice);
+
+		function passDevice() {
+			this.domHandler.showPageWithTitle(
+				battlePage,
+				this.currentOpponent.name
+			);
+			this.domHandler.showGameboard(this.currentOpponent.id);
+		}
+
+		// handle attack for every cell
+		const cells = document.querySelectorAll(".board-cell");
+		cells.forEach((cell) => {
+			cell.textContent = "";
+			cell.addEventListener("click", () => {
+				const result = handleAttack(cell);
+
+				// Remove text content when user attacks
+				if (result == "miss") {
+					this.swapTurns();
+
+					this.domHandler.showPageWithTitle(
+						passDevicePage,
+						this.currentPlayer.name
+					);
+				} else if (result == "gameOver") {
+					this.gameOver();
+				} else if (result == "prevShoot") {
+					alert("You attacked that cell already");
+				}
+			});
+		});
+	}
+
+	handleAttack(cell) {
+		const coords = Array.from(cell.dataset.coords.split("-").map(Number));
+		const clickedBoard = cell.classList[1];
+		let player;
+
+		if (clickedBoard == "player-gameboard") {
+			player = this.player1;
+		} else {
+			player = this.player2;
+		}
+
+		const attackResult = player.gameboard.receiveAttack(coords);
+
+		if (attackResult instanceof Ship) {
+			if (attackResult.isSunk()) {
+				player.gameboard.destroyShip(
+					player,
+					clickedBoard,
+					attackResult
+				);
+				const isGameOver = player.gameboard.areAllShipsSunk();
+
+				if (isGameOver) {
+					return "gameOver";
+				}
+			}
+
+			cell.classList.add("hit");
+			return "hit";
+		} else if (attackResult == "miss") {
+			cell.classList.add("miss");
+			return "miss";
+		} else if (attackResult == "prevShoot") {
+			return "prevShoot";
+		}
+	}
+
+	createShips() {
+		const SHIPLENGTHS = [2, 1];
+		const ships = [];
+
+		for (let i in SHIPLENGTHS) {
+			const ship = new Ship(SHIPLENGTHS[i]);
+			ships.push(ship);
+		}
+
+		return ships;
+	}
+
+	gameOver() {
 		const winner = currentPlayer;
 		this.domHandler.showPageWithTitle(winnerPage, winner.name);
+	}
+
+	restartValues() {
+		this.domHandler = null;
+		this.player1 = null;
+		this.player2 = null;
+		this.currentPlayer = this.player1;
+		this.currentOpponent = this.player2;
+		this.startPlacingListener = null;
+
+		// Remove boards elements
+		gameboardsContainer.textContent = "";
+		startPlacingBtn.removeEventListener("click", this.startPlacingListener);
+	}
+
+	returnHome() {
+		this.domHandler.showPageWithTitle(startGamePage);
 	}
 
 	swapTurns() {
@@ -130,236 +317,18 @@ class GameManager {
 	}
 }
 
-function initializeGame() {
-	// Creating Dom handler
-	domHandler = new DOMHandler();
+const Game = new GameManager();
 
-	// Create gameboards
-	domHandler.createGameboards();
+startGameBtn.addEventListener("click", () => {
+	Game.restartValues();
+	Game.startGame();
+});
 
-	// Creating players
-	player1 = new Player(1, "P1", new Gameboard());
-	player2 = new Player(2, "P2", new Gameboard());
+returnHomeBtn.addEventListener("click", () => {
+	Game.returnHome();
+});
 
-	// Set current players
-	currentPlayer = player1;
-	currentOpponent = player2;
-
-	// Get every player's gameboard and assign it to each.
-	const playerBoard1 = document.querySelector("#player-gameboard");
-	const playerBoard2 = document.querySelector("#opponent-gameboard");
-	player1.gameboard.boardElement = playerBoard1;
-	player2.gameboard.boardElement = playerBoard2;
-
-	// Add event listener to start placing btn
-	startPlacingListener = startPlacingPhase;
-	startPlacingBtn.addEventListener("click", startPlacingListener);
-}
-
-function startGame() {
-	initializeGame();
-
-	// Placement phase
-	domHandler.showPageWithTitle(placeShipsPage, currentPlayer.name);
-}
-
-async function startPlacingPhase() {
-	// move board and show title
-	moveBoard(currentPlayer.gameboard.boardElement, currentPlaceGameboard);
-	domHandler.showPageWithTitle(setCoordsPage, currentPlayer.name);
-
-	// Manage placing players' turns
-	await handlePlaceShip(currentPlayer);
-	moveBoard(currentPlayer.gameboard.boardElement, gameboardsContainer);
-
-	if (currentPlayer == player2) {
-		swapTurns();
-		startBattlePhase();
-	} else {
-		swapTurns();
-		domHandler.showPageWithTitle(placeShipsPage, currentPlayer.name);
-		moveBoard(currentPlayer.gameboard.boardElement, currentPlaceGameboard);
-	}
-
-	function moveBoard(board, container) {
-		container.appendChild(board);
-	}
-}
-
-function startBattlePhase() {
-	domHandler.showPageWithTitle(passDevicePage, currentPlayer.name);
-
-	// Remove all ships classes from boards
-	domHandler.toggleShips(
-		currentOpponent.id,
-		currentOpponent.gameboard.board,
-		"remove"
-	);
-
-	domHandler.toggleShips(
-		currentPlayer.id,
-		currentPlayer.gameboard.board,
-		"remove"
-	);
-
-	passDeviceBtn.addEventListener("click", passDevice);
-
-	function passDevice() {
-		domHandler.showPageWithTitle(battlePage, currentOpponent.name);
-		domHandler.showGameboard(currentOpponent.id);
-	}
-
-	// handle attack for every cell
-	const cells = document.querySelectorAll(".board-cell");
-	cells.forEach((cell) => {
-		cell.textContent = "";
-		cell.addEventListener("click", () => {
-			const result = handleAttack(cell);
-
-			// Remove text content when user attacks
-			if (result == "miss") {
-				swapTurns();
-
-				domHandler.showPageWithTitle(
-					passDevicePage,
-					currentPlayer.name
-				);
-			} else if (result == "gameOver") {
-				gameOver();
-			} else if (result == "prevShoot") {
-				alert("You attacked that cell already");
-			}
-		});
-	});
-}
-
-function gameOver() {
-	const winner = currentPlayer;
-	domHandler.showPageWithTitle(winnerPage, winner.name);
-}
-
-function swapTurns() {
-	currentPlayer = currentPlayer == player1 ? player2 : player1;
-	currentOpponent = currentPlayer == player2 ? player1 : player2;
-}
-
-async function handlePlaceShip(player) {
-	const ships = createShips();
-	const coordInput = coordsContainer.querySelector("#coord-input");
-	const coordSubmitBtn = coordsContainer.querySelector("#coord-submit");
-
-	for (let ship of ships) {
-		shipLengthTitle.textContent = `Next ship length: ${ship.length} squares!`;
-
-		let shipsCount = 0;
-		let resolveCoordinates;
-
-		// Create promise for async input
-		const coordinatePromise = new Promise((resolve) => {
-			resolveCoordinates = resolve;
-		});
-
-		function handleCoordInput() {
-			const coordResult = player.gameboard.validateCoordinates(
-				coordInput.value,
-				ship.length
-			);
-
-			// If coordinate is correct, place ship
-			if (coordResult) {
-				const splittedCoords = coordInput.value
-					.split(",")
-					.filter((item) => item != "")
-					.join(",");
-
-				const transformedCoords =
-					player.gameboard.transformCoordinates(splittedCoords);
-
-				shipsCount++;
-
-				// Place ship and continue placement
-				player.gameboard.placeShip(ship, transformedCoords);
-				domHandler.toggleShips(
-					player.id,
-					player.gameboard.board,
-					"add"
-				);
-				resolveCoordinates(transformedCoords);
-
-				// Remove event listener and avoid creating several ones
-				coordSubmitBtn.removeEventListener("click", handleCoordInput);
-
-				// If there are ships left, continue and log message
-				if (!shipsCount === ships.length) {
-					console.log("Keep writing your ships' coordinates:");
-					console.log("Next Ship length: " + ship.length);
-				}
-				coordInput.value = "";
-			} else {
-				alert("Invalid coordinate.");
-				coordInput.value = "";
-			}
-		}
-		coordSubmitBtn.addEventListener("click", handleCoordInput);
-
-		// Wait until the current ship is placed
-		await coordinatePromise;
-	}
-}
-
-function createShips() {
-	const SHIPLENGTHS = [2, 1];
-	const ships = [];
-
-	for (let i in SHIPLENGTHS) {
-		const ship = new Ship(SHIPLENGTHS[i]);
-		ships.push(ship);
-	}
-
-	return ships;
-}
-
-function handleAttack(cell) {
-	const coords = Array.from(cell.dataset.coords.split("-").map(Number));
-	const clickedBoard = cell.classList[1];
-	let player;
-
-	if (clickedBoard == "player-gameboard") {
-		player = player1;
-	} else {
-		player = player2;
-	}
-
-	const attackResult = player.gameboard.receiveAttack(coords);
-
-	if (attackResult instanceof Ship) {
-		if (attackResult.isSunk()) {
-			player.gameboard.destroyShip(player, clickedBoard, attackResult);
-			const isGameOver = player.gameboard.areAllShipsSunk();
-
-			if (isGameOver) {
-				return "gameOver";
-			}
-		}
-
-		cell.classList.add("hit");
-		return "hit";
-	} else if (attackResult == "miss") {
-		cell.classList.add("miss");
-		return "miss";
-	} else if (attackResult == "prevShoot") {
-		return "prevShoot";
-	}
-}
-
-function restartValues() {
-	domHandler = undefined;
-	player1 = undefined;
-	player2 = undefined;
-	currentPlayer = undefined;
-	currentOpponent = undefined;
-
-	// Remove boards elements
-	gameboardsContainer.textContent = "";
-	startPlacingBtn.removeEventListener("click", startPlacingListener);
-}
+restartGameBtn.addEventListener("click", () => {
+	Game.restartValues();
+	Game.startGame();
+});
