@@ -23,6 +23,9 @@ const currentPlaceGameboard = document.querySelector(
 	"#current-placing-gameboard"
 );
 
+// TODO: Fix bug: be able to place ships with random coordinates
+// TODO: Feature: Add random ship's placement
+// TODO: Feature: Place ships coords using clicks.
 // TODO: Feature: validate coords to return different errors to show to the user
 // TODO: Feature: Drag and Drop feature for placing ships.
 // TODO: Feature: Ships' graveyard.
@@ -58,27 +61,42 @@ class GameManager {
 		const playerBoard2 = document.querySelector("#opponent-gameboard");
 		this.player1.gameboard.boardElement = playerBoard1;
 		this.player2.gameboard.boardElement = playerBoard2;
-
-		// Add event listener to start placing btn
-
-		this.startPlacingListener = this.startPlacingPhase.bind(this);
-		startPlacingBtn.addEventListener("click", this.startPlacingListener);
 	}
 
-	startGame() {
+	async startGame() {
 		this.resetGame();
 		this.initializeGame();
 
 		// TODO: orchestrade game flow
 
-		// Placement phase
+		// PLACEMENT PHASE
 		this.domHandler.showPageWithTitle(
 			placeShipsPage,
 			this.currentPlayer.name
 		);
+
+		// Let players take turns for placing
+		for (let i = 0; i < 2; i++) {
+			this.startPlacementPromise = new Promise((resolve) => {
+				this.startPlacingListener = () => {
+					resolve();
+				};
+
+				startPlacingBtn.addEventListener(
+					"click",
+					this.startPlacingListener
+				);
+			});
+
+			await this.startPlacementPromise;
+			await this.placementPhase();
+		}
+
+		// BATTLE PHASE
+		this.startBattlePhase();
 	}
 
-	async startPlacingPhase() {
+	async placementPhase() {
 		// move board and show title
 		moveBoard(
 			this.currentPlayer.gameboard.boardElement,
@@ -99,9 +117,8 @@ class GameManager {
 
 		// Handle placement turns
 		if (this.currentPlayer == this.player2) {
-			// If player 2 placed their ships, move to next phase
+			// If player 2 placed their ships, and finish placement.
 			this.swapTurns();
-			this.startBattlePhase();
 		} else {
 			// If player 1 placed ships, let player2 place their ships.
 			this.swapTurns();
