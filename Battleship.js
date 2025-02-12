@@ -79,6 +79,10 @@ class GameManager {
 		for (let i = 0; i < 2; i++) {
 			this.startPlacementPromise = new Promise((resolve) => {
 				this.startPlacingListener = () => {
+					startPlacingBtn.removeEventListener(
+						"click",
+						this.startPlacingListener
+					);
 					resolve();
 				};
 
@@ -93,7 +97,10 @@ class GameManager {
 		}
 
 		// BATTLE PHASE
-		this.startBattlePhase();
+		await this.startBattlePhase();
+
+		// SHOW WINNER PHASE
+		this.gameOver();
 	}
 
 	async placementPhase() {
@@ -205,7 +212,12 @@ class GameManager {
 		}
 	}
 
-	startBattlePhase() {
+	async startBattlePhase() {
+		let resolveBattle;
+		const battlePromise = new Promise((resolve) => {
+			resolveBattle = resolve;
+		});
+
 		this.domHandler.showPageWithTitle(
 			passDevicePage,
 			this.currentPlayer.name
@@ -250,12 +262,14 @@ class GameManager {
 						this.currentPlayer.name
 					);
 				} else if (result == "gameOver") {
-					this.gameOver();
+					resolveBattle();
 				} else if (result == "prevShoot") {
 					alert("You attacked that cell already");
 				}
 			});
 		});
+
+		await battlePromise;
 	}
 
 	handleAttack(cell) {
@@ -296,7 +310,7 @@ class GameManager {
 	}
 
 	createShips() {
-		const SHIPLENGTHS = [2, 1];
+		const SHIPLENGTHS = [1];
 		const ships = [];
 
 		for (let i in SHIPLENGTHS) {
