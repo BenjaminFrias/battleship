@@ -247,38 +247,50 @@ class GameManager {
 		if (coordinateLength == 1) {
 			let coordinate = "";
 
-			const randomLetter = letters.charAt(
-				Math.floor(Math.random() * letters.length)
-			);
+			while (
+				!player.gameboard.validateCoordinates(
+					coordinate,
+					coordinateLength
+				)
+			) {
+				console.log(coordinate);
 
-			const randomNumber =
-				numbers[Math.floor(Math.random() * numbers.length)];
+				const randomLetter = letters.charAt(
+					Math.floor(Math.random() * letters.length)
+				);
 
-			coordinate = randomLetter + randomNumber;
+				const randomNumber =
+					numbers[Math.floor(Math.random() * numbers.length)];
 
-			console.log(coordinate);
-
+				coordinate = randomLetter + randomNumber;
+			}
 			return coordinate;
+		} else if (coordinateLength > 1) {
+			let coordinates = "";
+
+			for (let i = 0; i < coordinateLength; i++) {
+				let coordinate = "";
+
+				while (!player.gameboard.validateCoordinates(coordinate, 1)) {
+					const randomLetter = letters.charAt(
+						Math.floor(Math.random() * letters.length)
+					);
+
+					const randomNumber =
+						numbers[Math.floor(Math.random() * numbers.length)];
+
+					coordinate = randomLetter + randomNumber;
+				}
+
+				if (i == coordinateLength - 1) {
+					coordinates += `${coordinate}`;
+				} else {
+					coordinates += `${coordinate},`;
+				}
+			}
+
+			return coordinates;
 		}
-
-		// else if (coordinateLength > 1) {
-		// 	let coordinates = "";
-		// 	for (let i = 0; i < coordinateLength; i++) {
-		// 		const randomLetter = letters.charAt(
-		// 			Math.floor(Math.random() * letters.length)
-		// 		);
-
-		// 		const randomNumber =
-		// 			numbers[Math.floor(Math.random() * numbers.length)];
-
-		// 		if (i == coordinateLength - 1) {
-		// 			coordinates += `${randomLetter + randomNumber}`;
-		// 		} else {
-		// 			coordinates += `${randomLetter + randomNumber},`;
-		// 		}
-		// 	}
-		// 	return coordinates;
-		// }
 	}
 
 	async startBattlePhase() {
@@ -379,7 +391,7 @@ class GameManager {
 	}
 
 	createShips() {
-		const SHIPLENGTHS = [1, 1, 1, 1];
+		const SHIPLENGTHS = [3, 2, 1];
 		const ships = [];
 
 		for (let i in SHIPLENGTHS) {
