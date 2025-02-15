@@ -156,37 +156,50 @@ class GameManager {
 				resolveCoordinates = resolve;
 			});
 
-			let coordinate = coordInput.value;
-
 			// Set handleCoordInputListener to the function
-			this.handleCoordInputListener = this.handleCoordInput.bind(
-				this,
-				player,
-				ship,
-				coordinate,
-				resolveCoordinates
-			);
+			this.handleCoordInputListener = () => {
+				let coordinate = coordInput.value;
+				this.handleCoordInput.bind(
+					this,
+					player,
+					ship,
+					coordinate,
+					resolveCoordinates
+				)();
+			};
+
+			this.handleRandomCoordListener = () => {
+				let randomCoordinate = this.getRandomCoordinates(
+					player,
+					ship.length
+				);
+
+				this.handleCoordInput.bind(
+					this,
+					player,
+					ship,
+					randomCoordinate,
+					resolveCoordinates
+				)();
+			};
 
 			coordSubmitBtn.addEventListener(
 				"click",
 				this.handleCoordInputListener
 			);
 
-			randomPlacementBtn.addEventListener("click", () => {
-				coordinate = this.getRandomCoordinates(ship.length);
-				this.handleCoordInputListener = this.handleCoordInput.bind(
-					this,
-					player,
-					ship,
-					coordinate,
-					resolveCoordinates
-				);
-
-				this.handleCoordInputListener();
-			});
+			randomPlacementBtn.addEventListener(
+				"click",
+				this.handleRandomCoordListener
+			);
 
 			// Wait until the current ship is placed
 			await coordinatePromise;
+
+			randomPlacementBtn.removeEventListener(
+				"click",
+				this.handleRandomCoordListener
+			);
 
 			coordSubmitBtn.removeEventListener(
 				"click",
@@ -227,12 +240,13 @@ class GameManager {
 		}
 	}
 
-	getRandomCoordinates(coordinateLength) {
+	getRandomCoordinates(player, coordinateLength) {
 		const letters = "ABCDEFGHIJ";
 		const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 10];
 
 		if (coordinateLength == 1) {
 			let coordinate = "";
+
 			const randomLetter = letters.charAt(
 				Math.floor(Math.random() * letters.length)
 			);
@@ -241,25 +255,30 @@ class GameManager {
 				numbers[Math.floor(Math.random() * numbers.length)];
 
 			coordinate = randomLetter + randomNumber;
+
+			console.log(coordinate);
+
 			return coordinate;
-		} else if (coordinateLength > 1) {
-			let coordinates = "";
-			for (let i = 0; i < coordinateLength; i++) {
-				const randomLetter = letters.charAt(
-					Math.floor(Math.random() * letters.length)
-				);
-
-				const randomNumber =
-					numbers[Math.floor(Math.random() * numbers.length)];
-
-				if (i == coordinateLength - 1) {
-					coordinates += `${randomLetter + randomNumber}`;
-				} else {
-					coordinates += `${randomLetter + randomNumber},`;
-				}
-			}
-			return coordinates;
 		}
+
+		// else if (coordinateLength > 1) {
+		// 	let coordinates = "";
+		// 	for (let i = 0; i < coordinateLength; i++) {
+		// 		const randomLetter = letters.charAt(
+		// 			Math.floor(Math.random() * letters.length)
+		// 		);
+
+		// 		const randomNumber =
+		// 			numbers[Math.floor(Math.random() * numbers.length)];
+
+		// 		if (i == coordinateLength - 1) {
+		// 			coordinates += `${randomLetter + randomNumber}`;
+		// 		} else {
+		// 			coordinates += `${randomLetter + randomNumber},`;
+		// 		}
+		// 	}
+		// 	return coordinates;
+		// }
 	}
 
 	async startBattlePhase() {
@@ -360,7 +379,7 @@ class GameManager {
 	}
 
 	createShips() {
-		const SHIPLENGTHS = [4, 3];
+		const SHIPLENGTHS = [1, 1, 1, 1];
 		const ships = [];
 
 		for (let i in SHIPLENGTHS) {
