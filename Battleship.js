@@ -19,6 +19,7 @@ const startPlacingBtn = document.querySelector("#start-placing-btn");
 const shipLengthTitle = document.querySelector("#ship-length");
 const coordInput = coordsContainer.querySelector("#coord-input");
 const coordSubmitBtn = coordsContainer.querySelector("#coord-submit");
+const randomPlacementBtn = document.querySelector("#random-placement");
 const currentPlaceGameboard = document.querySelector(
 	"#current-placing-gameboard"
 );
@@ -49,8 +50,8 @@ class GameManager {
 		this.domHandler.createGameboards();
 
 		// Creating players
-		this.player1 = new Player(1, "P1", new Gameboard());
-		this.player2 = new Player(2, "P2", new Gameboard());
+		this.player1 = new Player(1, "Player 1", new Gameboard());
+		this.player2 = new Player(2, "Player 2", new Gameboard());
 
 		// Set current players
 		this.currentPlayer = this.player1;
@@ -66,8 +67,6 @@ class GameManager {
 	async startGame() {
 		this.resetGame();
 		this.initializeGame();
-
-		// TODO: orchestrade game flow
 
 		// PLACEMENT PHASE
 		this.domHandler.showPageWithTitle(
@@ -157,11 +156,14 @@ class GameManager {
 				resolveCoordinates = resolve;
 			});
 
+			let coordinate = coordInput.value;
+
 			// Set handleCoordInputListener to the function
 			this.handleCoordInputListener = this.handleCoordInput.bind(
 				this,
 				player,
 				ship,
+				coordinate,
 				resolveCoordinates
 			);
 
@@ -169,6 +171,19 @@ class GameManager {
 				"click",
 				this.handleCoordInputListener
 			);
+
+			randomPlacementBtn.addEventListener("click", () => {
+				coordinate = this.getRandomCoordinates(ship.length);
+				this.handleCoordInputListener = this.handleCoordInput.bind(
+					this,
+					player,
+					ship,
+					coordinate,
+					resolveCoordinates
+				);
+
+				this.handleCoordInputListener();
+			});
 
 			// Wait until the current ship is placed
 			await coordinatePromise;
@@ -180,15 +195,15 @@ class GameManager {
 		}
 	}
 
-	handleCoordInput(player, ship, resolveCoordinates) {
+	handleCoordInput(player, ship, coordinate, resolveCoordinates) {
 		const coordResult = player.gameboard.validateCoordinates(
-			coordInput.value,
+			coordinate,
 			ship.length
 		);
 
 		// If coordinate is correct, place ship
 		if (coordResult) {
-			const splittedCoords = coordInput.value
+			const splittedCoords = coordinate
 				.split(",")
 				.filter((item) => item != "")
 				.join(",");
@@ -204,11 +219,46 @@ class GameManager {
 				player.gameboard.board,
 				"add"
 			);
-			resolveCoordinates(transformedCoords);
+			resolveCoordinates();
 			coordInput.value = "";
 		} else {
 			alert("Invalid coordinate.");
 			coordInput.value = "";
+		}
+	}
+
+	getRandomCoordinates(coordinateLength) {
+		const letters = "ABCDEFGHIJ";
+		const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 10];
+
+		if (coordinateLength == 1) {
+			let coordinate = "";
+			const randomLetter = letters.charAt(
+				Math.floor(Math.random() * letters.length)
+			);
+
+			const randomNumber =
+				numbers[Math.floor(Math.random() * numbers.length)];
+
+			coordinate = randomLetter + randomNumber;
+			return coordinate;
+		} else if (coordinateLength > 1) {
+			let coordinates = "";
+			for (let i = 0; i < coordinateLength; i++) {
+				const randomLetter = letters.charAt(
+					Math.floor(Math.random() * letters.length)
+				);
+
+				const randomNumber =
+					numbers[Math.floor(Math.random() * numbers.length)];
+
+				if (i == coordinateLength - 1) {
+					coordinates += `${randomLetter + randomNumber}`;
+				} else {
+					coordinates += `${randomLetter + randomNumber},`;
+				}
+			}
+			return coordinates;
 		}
 	}
 
@@ -310,7 +360,7 @@ class GameManager {
 	}
 
 	createShips() {
-		const SHIPLENGTHS = [1];
+		const SHIPLENGTHS = [4, 3];
 		const ships = [];
 
 		for (let i in SHIPLENGTHS) {
