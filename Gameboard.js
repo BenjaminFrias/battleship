@@ -149,10 +149,10 @@ export class Gameboard {
 
 			if (this.board.has(coordString)) {
 				return true;
-			} else {
-				return false;
 			}
 		}
+
+		return false;
 	}
 
 	transformCoordinates(coords) {

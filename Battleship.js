@@ -240,10 +240,13 @@ class GameManager {
 		}
 	}
 
+	// TODO: move to gameboard.js because it's a coordinate-related function
 	getRandomCoordinates(player, coordinateLength) {
 		const letters = "ABCDEFGHIJ";
 		const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 10];
+		const possibleOrientations = ["horizontal", "vertical"];
 
+		// TODO: create contiguous ships coordinates
 		if (coordinateLength == 1) {
 			let coordinate = "";
 
@@ -253,8 +256,6 @@ class GameManager {
 					coordinateLength
 				)
 			) {
-				console.log(coordinate);
-
 				const randomLetter = letters.charAt(
 					Math.floor(Math.random() * letters.length)
 				);
@@ -266,28 +267,82 @@ class GameManager {
 			}
 			return coordinate;
 		} else if (coordinateLength > 1) {
+			const orientation =
+				possibleOrientations[
+					Math.floor(Math.random() * possibleOrientations.length)
+				];
+
 			let coordinates = "";
+			let firstCoord;
+			let randomLetterIndex = 100;
+			let randomNumber;
 
-			for (let i = 0; i < coordinateLength; i++) {
-				let coordinate = "";
+			// Get first coord by checking availability and length boundaries
 
-				while (!player.gameboard.validateCoordinates(coordinate, 1)) {
-					const randomLetter = letters.charAt(
-						Math.floor(Math.random() * letters.length)
+			if ("horizontal" == "horizontal") {
+				while (
+					!player.gameboard.validateCoordinates(firstCoord, 1) ||
+					randomLetterIndex > letters.length - coordinateLength
+				) {
+					randomLetterIndex = Math.floor(
+						Math.random() * letters.length
 					);
-
-					const randomNumber =
+					randomNumber =
 						numbers[Math.floor(Math.random() * numbers.length)];
 
-					coordinate = randomLetter + randomNumber;
+					firstCoord = letters[randomLetterIndex] + randomNumber;
 				}
 
-				if (i == coordinateLength - 1) {
-					coordinates += `${coordinate}`;
-				} else {
-					coordinates += `${coordinate},`;
+				for (let i = 0; i < coordinateLength; i++) {
+					if (i == coordinateLength - 1) {
+						coordinates += `${
+							letters[randomLetterIndex++] + randomNumber
+						}`;
+					} else {
+						coordinates += `${
+							letters[randomLetterIndex++] + randomNumber
+						},`;
+					}
+				}
+
+				console.log(
+					player.gameboard.validateCoordinates(
+						coordinates,
+						coordinateLength
+					)
+				);
+
+				console.log(coordinates);
+
+				return coordinates;
+			} else {
+				while (
+					!player.gameboard.validateCoordinates(firstCoord, 1) ||
+					randomLetterIndex > letters.length - coordinateLength
+				) {
+					randomLetterIndex = Math.floor(
+						Math.random() * letters.length
+					);
+					randomNumber =
+						numbers[Math.floor(Math.random() * numbers.length)];
+
+					firstCoord = letters[randomLetterIndex] + randomNumber;
+				}
+
+				for (let i = 0; i < coordinateLength; i++) {
+					if (i == coordinateLength - 1) {
+						coordinates += `${
+							letters[randomLetterIndex] + randomNumber++
+						}`;
+					} else {
+						coordinates += `${
+							letters[randomLetterIndex] + randomNumber++
+						},`;
+					}
 				}
 			}
+
+			console.log(coordinates);
 
 			return coordinates;
 		}
@@ -391,7 +446,7 @@ class GameManager {
 	}
 
 	createShips() {
-		const SHIPLENGTHS = [3, 2, 1];
+		const SHIPLENGTHS = [8, 8, 8, 8, 8, 8, 8, 8];
 		const ships = [];
 
 		for (let i in SHIPLENGTHS) {
