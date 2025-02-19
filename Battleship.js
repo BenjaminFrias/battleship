@@ -441,7 +441,7 @@ class GameManager {
 	}
 
 	createShips() {
-		const SHIPLENGTHS = [8, 8, 8, 8, 8, 8, 8, 8];
+		const SHIPLENGTHS = [5, 3, 3, 2, 2, 2, 1, 1, 1, 1];
 		const ships = [];
 
 		for (let i in SHIPLENGTHS) {

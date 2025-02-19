@@ -57,6 +57,7 @@ export class Gameboard {
 	}
 
 	validateCoordinates(coordinates, mustLength) {
+		// TODO: feature: check ships around function
 		if (!coordinates) {
 			console.log("no value received");
 
@@ -108,15 +109,16 @@ export class Gameboard {
 				return false;
 			}
 
-			// TODO: validate contiguous ship coordinates
-			// Check for contiguous coordinates
-
 			const contiguityResult =
 				this.checkContiguousCoords(transformedCoords);
 
 			if (!contiguityResult) {
-				console.log("no contiguity");
+				return false;
+			}
 
+			const shipsAround = this.checkShipsAround(transformedCoords);
+
+			if (shipsAround) {
 				return false;
 			}
 
@@ -230,6 +232,36 @@ export class Gameboard {
 			}
 			return true;
 		}
+	}
+
+	checkShipsAround(coords) {
+		// Pass through every cell around the provided coords
+		for (let i = 0; i < coords.length; i++) {
+			const coordsAround = [
+				[-1, 0],
+				[-1, -1],
+				[0, -1],
+				[1, -1],
+				[1, 0],
+				[1, +1],
+				[0, +1],
+				[-1, +1],
+			];
+
+			// Check every cell around with the coordsAround tests
+			for (let j = 0; j < coordsAround.length; j++) {
+				let checkX = coords[i][0] + coordsAround[j][0];
+				let checkY = coords[i][1] + coordsAround[j][1];
+
+				// Check if the cell around is in board
+				if (this.board.has([checkX, checkY].toString())) {
+					console.log("THERE IS A SHIP:", [checkX, checkY]);
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	areAllShipsSunk() {
