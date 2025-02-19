@@ -265,14 +265,15 @@ class GameManager {
 
 			// Check every coord from first random coord
 			let coordinates = "";
-			if ("horizontal" == "horizontal") {
+			if (orientation == "horizontal") {
 				let isValid = false;
 
 				while (!isValid) {
 					coordinates = "";
 					let [randomLetterIndex, randomNumber] = getFirstRandomCoord(
 						player,
-						coordinateLength
+						coordinateLength,
+						orientation
 					);
 
 					// validate every coord to check if it's valid
@@ -306,34 +307,46 @@ class GameManager {
 						}
 					}
 				}
-
-				return coordinates;
 			} else {
-				while (
-					!player.gameboard.validateCoordinates(firstCoord, 1) ||
-					randomNumber > letters.length - coordinateLength
-				) {
-					randomLetterIndex = Math.floor(
-						Math.random() * letters.length
+				let isValid = false;
+
+				while (!isValid) {
+					coordinates = "";
+					let [randomLetterIndex, randomNumber] = getFirstRandomCoord(
+						player,
+						coordinateLength,
+						orientation
 					);
-					randomNumber =
-						numbers[Math.floor(Math.random() * numbers.length)];
 
-					console.log("Random letter index: ", randomLetterIndex);
-					console.log("Random number: ", randomNumber);
+					// validate every coord to check if it's valid
+					for (let i = 0; i < coordinateLength; i++) {
+						let currentLetter = letters[randomLetterIndex];
+						coordinates += `${currentLetter + randomNumber}`;
 
-					firstCoord = letters[randomLetterIndex] + randomNumber;
-				}
+						// Check current coord, if invalid set coords to ""
+						if (
+							!player.gameboard.validateCoordinates(
+								currentLetter + randomNumber,
+								1
+							)
+						) {
+							coordinates = "";
+						}
 
-				for (let i = 0; i < coordinateLength; i++) {
-					if (i == coordinateLength - 1) {
-						coordinates += `${
-							letters[randomLetterIndex] + randomNumber++
-						}`;
-					} else {
-						coordinates += `${
-							letters[randomLetterIndex] + randomNumber++
-						},`;
+						randomNumber++;
+
+						// If isn't last element add ,
+						if (i < coordinateLength - 1) {
+							coordinates += ",";
+						}
+
+						// If last element and random coordinate is equal to coordinates length finish.
+						if (
+							i < coordinateLength - 1 &&
+							coordinates.split(",").length == coordinateLength
+						) {
+							isValid = true;
+						}
 					}
 				}
 			}
@@ -342,23 +355,30 @@ class GameManager {
 			return coordinates;
 		}
 
-		function getFirstRandomCoord(player, coordinateLength) {
+		function getFirstRandomCoord(player, coordinateLength, orientation) {
 			const letters = "ABCDEFGHIJ";
 			const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 10];
 			const MAX_RANGE = 10;
 
 			let firstRandomCoord;
-			let randomLetterIndex = 100;
+			let randomLetterIndex;
 			let randomNumber;
+			let indexToBeChecked = 100;
 
 			while (
 				!player.gameboard.validateCoordinates(firstRandomCoord, 1) ||
-				randomLetterIndex > MAX_RANGE - coordinateLength
+				indexToBeChecked > MAX_RANGE - coordinateLength
 			) {
 				randomLetterIndex = Math.floor(Math.random() * MAX_RANGE);
 				randomNumber = numbers[Math.floor(Math.random() * MAX_RANGE)];
 
 				firstRandomCoord = letters[randomLetterIndex] + randomNumber;
+
+				if (orientation == "horizontal") {
+					indexToBeChecked = randomLetterIndex;
+				} else {
+					indexToBeChecked = randomNumber;
+				}
 			}
 
 			return [randomLetterIndex, randomNumber];
