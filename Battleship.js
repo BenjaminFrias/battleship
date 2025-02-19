@@ -263,7 +263,7 @@ class GameManager {
 					Math.floor(Math.random() * possibleOrientations.length)
 				];
 
-			// TODO: while every coord is valid push it to array and then send it, if one coord is not valid, another coord
+			// Check every coord from first random coord
 			let coordinates = "";
 			if ("horizontal" == "horizontal") {
 				let isValid = false;
@@ -272,58 +272,42 @@ class GameManager {
 					coordinates = "";
 					let [randomLetterIndex, randomNumber] = getFirstRandomCoord(
 						player,
-						1
+						coordinateLength
 					);
 
-					// TODO: Validate every coord to check if it's valid
+					// validate every coord to check if it's valid
 					for (let i = 0; i < coordinateLength; i++) {
-						coordinates += `${
-							letters[randomLetterIndex++] + randomNumber
-						}`;
+						let currentLetter = letters[randomLetterIndex];
+						coordinates += `${currentLetter + randomNumber}`;
 
+						// Check current coord, if invalid set coords to ""
 						if (
 							!player.gameboard.validateCoordinates(
-								letters[randomLetterIndex] + randomNumber,
+								currentLetter + randomNumber,
 								1
 							)
 						) {
-							console.log("invalid!, setting coords to null");
-
-							console.log(coordinates);
-
 							coordinates = "";
 						}
 
+						randomLetterIndex++;
+
+						// If isn't last element add ,
 						if (i < coordinateLength - 1) {
 							coordinates += ",";
 						}
 
-						if (i < coordinateLength - 1 && coordinates != "") {
+						// If last element and random coordinate is equal to coordinates length finish.
+						if (
+							i < coordinateLength - 1 &&
+							coordinates.split(",").length == coordinateLength
+						) {
 							isValid = true;
 						}
 					}
-					console.log("iteration");
 				}
 
-				console.log(coordinates);
-
 				return coordinates;
-				/*
-				Check orientation
-
-
-				Get first random coord
-					valid this first random coord
-				
-				
-				Get the rest of coords based on the first random coord
-					if there's a invalid coord
-						coordinates = null
-						get the first random coord again
-				
-				if coordinates are valid, stop loop and return coordinates
-
-				*/
 			} else {
 				while (
 					!player.gameboard.validateCoordinates(firstCoord, 1) ||

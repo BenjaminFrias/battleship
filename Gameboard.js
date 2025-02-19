@@ -58,10 +58,13 @@ export class Gameboard {
 
 	validateCoordinates(coordinates, mustLength) {
 		if (!coordinates) {
+			console.log("no value received");
+
 			return false;
 		}
 
 		if (typeof coordinates != "string") {
+			console.log("no strign");
 			return false;
 		}
 
@@ -72,6 +75,7 @@ export class Gameboard {
 
 			// Check for coordinate length
 			if (splittedCoords.length != mustLength) {
+				console.log("no length");
 				return false;
 			}
 
@@ -81,12 +85,14 @@ export class Gameboard {
 			);
 
 			if (!areCoordsValid) {
+				console.log("every coord is not valid");
 				return false;
 			}
 
 			// Check for repeated values;
 			const repeatedCoords = this.hasRepeatedCoords(splittedCoords);
 			if (repeatedCoords) {
+				console.log("repeated coords");
 				return false;
 			}
 
@@ -98,6 +104,7 @@ export class Gameboard {
 			const isCellOccupied = this.checkExistingCoords(transformedCoords);
 
 			if (isCellOccupied) {
+				console.log("cell are occupied");
 				return false;
 			}
 
@@ -108,18 +115,25 @@ export class Gameboard {
 				this.checkContiguousCoords(transformedCoords);
 
 			if (!contiguityResult) {
+				console.log("no contiguity");
+
 				return false;
 			}
 
 			return true;
 		} else {
 			if (mustLength > 1 || !this.validateSingleCoord(coordinates)) {
+				console.log(
+					"single cell no valid because of length or validation"
+				);
 				return false;
 			}
 
 			const transformedCoords = this.transformCoordinates(coordinates);
 			const isCellOccupied = this.checkExistingCoords(transformedCoords);
 			if (isCellOccupied) {
+				console.log("single cell ocupiedd");
+
 				return false;
 			}
 		}
