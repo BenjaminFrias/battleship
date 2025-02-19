@@ -274,6 +274,7 @@ class GameManager {
 					orientation
 				);
 
+				// TODO: check cells around random coords
 				// validate every coord to check if it's valid
 				for (let i = 0; i < coordinateLength; i++) {
 					let currentLetter = letters[randomLetterIndex];
@@ -284,6 +285,16 @@ class GameManager {
 						!player.gameboard.validateCoordinates(
 							currentLetter + randomNumber,
 							1
+						)
+					) {
+						coordinates = "";
+					}
+
+					// Check current coordinates
+					if (
+						!player.gameboard.validateCoordinates(
+							coordinates,
+							coordinates.split(",").length
 						)
 					) {
 						coordinates = "";
@@ -302,9 +313,15 @@ class GameManager {
 
 					// If last element and random coordinate is equal to coordinates length finish.
 					if (
-						i < coordinateLength - 1 &&
+						i == coordinateLength - 1 &&
 						coordinates.split(",").length == coordinateLength
 					) {
+						console.log("Before finishing: ", coordinates);
+						console.log(
+							"Before finishing valid length: ",
+							coordinates.split(",").length == coordinateLength
+						);
+
 						isValid = true;
 					}
 				}

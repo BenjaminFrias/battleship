@@ -135,7 +135,11 @@ export class Gameboard {
 			const isCellOccupied = this.checkExistingCoords(transformedCoords);
 			if (isCellOccupied) {
 				console.log("single cell ocupiedd");
+				return false;
+			}
 
+			const shipsAround = this.checkShipsAround(transformedCoords);
+			if (shipsAround) {
 				return false;
 			}
 		}

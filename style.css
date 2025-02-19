@@ -384,7 +384,8 @@ h2#start-placing-title {
 	outline: 0px;
 }
 
-#coord-submit {
+#coord-submit,
+#random-placement {
 	position: relative;
 	bottom: 0px;
 	right: 0px;
@@ -393,15 +394,16 @@ h2#start-placing-title {
 	background-color: var(--neo-blue);
 	font-family: "Inter", Arial, Helvetica, sans-serif;
 	font-weight: 700;
-	font-size: 1.2rem;
+	font-size: 1rem;
 	color: white;
-	padding: 0px 15px;
+	padding: 0px 5px;
 	box-shadow: 2px 2px black;
 	cursor: pointer;
 	transition: all 200ms ease;
 }
 
-#coord-submit:hover {
+#coord-submit:hover,
+#random-placement:hover {
 	bottom: 3px;
 	right: 3px;
 	box-shadow: 4px 4px black;
