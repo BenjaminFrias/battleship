@@ -59,13 +59,10 @@ export class Gameboard {
 	validateCoordinates(coordinates, mustLength) {
 		// TODO: feature: check ships around function
 		if (!coordinates) {
-			console.log("no value received");
-
 			return false;
 		}
 
 		if (typeof coordinates != "string") {
-			console.log("no strign");
 			return false;
 		}
 
@@ -76,7 +73,6 @@ export class Gameboard {
 
 			// Check for coordinate length
 			if (splittedCoords.length != mustLength) {
-				console.log("no length");
 				return false;
 			}
 
@@ -86,14 +82,12 @@ export class Gameboard {
 			);
 
 			if (!areCoordsValid) {
-				console.log("every coord is not valid");
 				return false;
 			}
 
 			// Check for repeated values;
 			const repeatedCoords = this.hasRepeatedCoords(splittedCoords);
 			if (repeatedCoords) {
-				console.log("repeated coords");
 				return false;
 			}
 
@@ -105,7 +99,6 @@ export class Gameboard {
 			const isCellOccupied = this.checkExistingCoords(transformedCoords);
 
 			if (isCellOccupied) {
-				console.log("cell are occupied");
 				return false;
 			}
 
@@ -125,16 +118,12 @@ export class Gameboard {
 			return true;
 		} else {
 			if (mustLength > 1 || !this.validateSingleCoord(coordinates)) {
-				console.log(
-					"single cell no valid because of length or validation"
-				);
 				return false;
 			}
 
 			const transformedCoords = this.transformCoordinates(coordinates);
 			const isCellOccupied = this.checkExistingCoords(transformedCoords);
 			if (isCellOccupied) {
-				console.log("single cell ocupiedd");
 				return false;
 			}
 
@@ -259,13 +248,123 @@ export class Gameboard {
 
 				// Check if the cell around is in board
 				if (this.board.has([checkX, checkY].toString())) {
-					console.log("THERE IS A SHIP:", [checkX, checkY]);
 					return true;
 				}
 			}
 		}
 
 		return false;
+	}
+
+	getRandomCoordinates(player, coordinateLength) {
+		const possibleOrientations = ["horizontal", "vertical"];
+		const letters = "ABCDEFGHIJ";
+
+		if (coordinateLength == 1) {
+			let coordinate = "";
+
+			const [letterIndex, randomNumber] = getFirstRandomCoord(
+				player,
+				coordinateLength
+			);
+			coordinate = letters[letterIndex] + randomNumber;
+
+			return coordinate;
+		} else if (coordinateLength > 1) {
+			const orientation =
+				possibleOrientations[
+					Math.floor(Math.random() * possibleOrientations.length)
+				];
+
+			// Check every coord from first random coord
+			let coordinates = "";
+			let isValid = false;
+
+			while (!isValid) {
+				coordinates = "";
+				let [randomLetterIndex, randomNumber] = getFirstRandomCoord(
+					player,
+					coordinateLength,
+					orientation
+				);
+
+				// validate every coord to check if it's valid
+				for (let i = 0; i < coordinateLength; i++) {
+					let currentLetter = letters[randomLetterIndex];
+					coordinates += `${currentLetter + randomNumber}`;
+
+					// Check current coord, if invalid set coords to ""
+					if (
+						!player.gameboard.validateCoordinates(
+							currentLetter + randomNumber,
+							1
+						)
+					) {
+						coordinates = "";
+					}
+
+					// Check current coordinates
+					if (
+						!player.gameboard.validateCoordinates(
+							coordinates,
+							coordinates.split(",").length
+						)
+					) {
+						coordinates = "";
+					}
+
+					if (orientation == "horizontal") {
+						randomLetterIndex++;
+					} else {
+						randomNumber++;
+					}
+
+					// If isn't last element add ,
+					if (i < coordinateLength - 1) {
+						coordinates += ",";
+					}
+
+					// If last element and random coordinate is equal to coordinates length finish.
+					if (
+						i == coordinateLength - 1 &&
+						coordinates.split(",").length == coordinateLength
+					) {
+						isValid = true;
+					}
+				}
+			}
+
+			return coordinates;
+		}
+
+		function getFirstRandomCoord(player, coordinateLength, orientation) {
+			const letters = "ABCDEFGHIJ";
+			const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 10];
+			const MAX_RANGE = 10;
+
+			let firstRandomCoord;
+			let randomLetterIndex;
+			let randomNumber;
+			let indexToBeChecked = 100;
+
+			while (
+				!player.gameboard.validateCoordinates(firstRandomCoord, 1) ||
+				indexToBeChecked > MAX_RANGE - coordinateLength
+			) {
+				randomLetterIndex = Math.floor(Math.random() * MAX_RANGE);
+				randomNumber = numbers[Math.floor(Math.random() * MAX_RANGE)];
+
+				firstRandomCoord = letters[randomLetterIndex] + randomNumber;
+
+				if (orientation == "horizontal") {
+					indexToBeChecked = randomLetterIndex;
+				} else {
+					indexToBeChecked = randomNumber;
+				}
+			}
+
+			return [randomLetterIndex, randomNumber];
+		}
 	}
 
 	areAllShipsSunk() {

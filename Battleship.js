@@ -169,7 +169,7 @@ class GameManager {
 			};
 
 			this.handleRandomCoordListener = () => {
-				let randomCoordinate = this.getRandomCoordinates(
+				let randomCoordinate = player.gameboard.getRandomCoordinates(
 					player,
 					ship.length
 				);
@@ -241,124 +241,6 @@ class GameManager {
 	}
 
 	// TODO: move to gameboard.js because it's a coordinate-related function
-	getRandomCoordinates(player, coordinateLength) {
-		const possibleOrientations = ["horizontal", "vertical"];
-		const letters = "ABCDEFGHIJ";
-
-		// TODO: create contiguous ships coordinates
-		if (coordinateLength == 1) {
-			let coordinate = "";
-
-			const [letterIndex, randomNumber] = getFirstRandomCoord(
-				player,
-				coordinateLength
-			);
-			coordinate = letters[letterIndex] + randomNumber;
-
-			return coordinate;
-		} else if (coordinateLength > 1) {
-			const orientation =
-				possibleOrientations[
-					Math.floor(Math.random() * possibleOrientations.length)
-				];
-
-			// Check every coord from first random coord
-			let coordinates = "";
-			let isValid = false;
-
-			while (!isValid) {
-				coordinates = "";
-				let [randomLetterIndex, randomNumber] = getFirstRandomCoord(
-					player,
-					coordinateLength,
-					orientation
-				);
-
-				// TODO: check cells around random coords
-				// validate every coord to check if it's valid
-				for (let i = 0; i < coordinateLength; i++) {
-					let currentLetter = letters[randomLetterIndex];
-					coordinates += `${currentLetter + randomNumber}`;
-
-					// Check current coord, if invalid set coords to ""
-					if (
-						!player.gameboard.validateCoordinates(
-							currentLetter + randomNumber,
-							1
-						)
-					) {
-						coordinates = "";
-					}
-
-					// Check current coordinates
-					if (
-						!player.gameboard.validateCoordinates(
-							coordinates,
-							coordinates.split(",").length
-						)
-					) {
-						coordinates = "";
-					}
-
-					if (orientation == "horizontal") {
-						randomLetterIndex++;
-					} else {
-						randomNumber++;
-					}
-
-					// If isn't last element add ,
-					if (i < coordinateLength - 1) {
-						coordinates += ",";
-					}
-
-					// If last element and random coordinate is equal to coordinates length finish.
-					if (
-						i == coordinateLength - 1 &&
-						coordinates.split(",").length == coordinateLength
-					) {
-						console.log("Before finishing: ", coordinates);
-						console.log(
-							"Before finishing valid length: ",
-							coordinates.split(",").length == coordinateLength
-						);
-
-						isValid = true;
-					}
-				}
-			}
-
-			return coordinates;
-		}
-
-		function getFirstRandomCoord(player, coordinateLength, orientation) {
-			const letters = "ABCDEFGHIJ";
-			const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 10];
-			const MAX_RANGE = 10;
-
-			let firstRandomCoord;
-			let randomLetterIndex;
-			let randomNumber;
-			let indexToBeChecked = 100;
-
-			while (
-				!player.gameboard.validateCoordinates(firstRandomCoord, 1) ||
-				indexToBeChecked > MAX_RANGE - coordinateLength
-			) {
-				randomLetterIndex = Math.floor(Math.random() * MAX_RANGE);
-				randomNumber = numbers[Math.floor(Math.random() * MAX_RANGE)];
-
-				firstRandomCoord = letters[randomLetterIndex] + randomNumber;
-
-				if (orientation == "horizontal") {
-					indexToBeChecked = randomLetterIndex;
-				} else {
-					indexToBeChecked = randomNumber;
-				}
-			}
-
-			return [randomLetterIndex, randomNumber];
-		}
-	}
 
 	async startBattlePhase() {
 		let resolveBattle;
