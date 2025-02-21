@@ -369,6 +369,7 @@ h2#start-placing-title {
 	gap: 10px;
 	box-sizing: border-box;
 	padding: 15px;
+	height: 80px;
 	margin: 0px 0px 15px 0px;
 }
 
@@ -384,8 +385,7 @@ h2#start-placing-title {
 	outline: 0px;
 }
 
-#coord-submit,
-#random-placement {
+.placement-btn {
 	position: relative;
 	bottom: 0px;
 	right: 0px;
@@ -402,8 +402,7 @@ h2#start-placing-title {
 	transition: all 200ms ease;
 }
 
-#coord-submit:hover,
-#random-placement:hover {
+.placement-btn:hover {
 	bottom: 3px;
 	right: 3px;
 	box-shadow: 4px 4px black;

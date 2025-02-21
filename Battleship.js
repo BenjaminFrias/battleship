@@ -23,9 +23,11 @@ const randomPlacementBtn = document.querySelector("#random-placement");
 const currentPlaceGameboard = document.querySelector(
 	"#current-placing-gameboard"
 );
+const continueBtn = document.querySelector("#continue-placing-btn");
 
-// TODO: Fix bug: be able to place ships with random coordinates
-// TODO: Feature: Add random ship's placement
+// TODO: Feature: place all ship's randomly by cliking random once
+// TODO: Refactor: Change battle phase to a single attacking page
+
 // TODO: Feature: Place ships coords using clicks.
 // TODO: Feature: validate coords to return different errors to show to the user
 // TODO: Feature: Drag and Drop feature for placing ships.
@@ -145,6 +147,23 @@ class GameManager {
 
 	async handlePlaceShip(player) {
 		const ships = this.createShips();
+		let isRandom = false;
+
+		// Create promise to finish the placing when user click continue
+		let resolveFinishPromise;
+		const finishPromise = new Promise((resolve) => {
+			resolveFinishPromise = resolve;
+		});
+
+		// Remove hide class
+		randomPlacementBtn.classList.remove("hide");
+		coordInput.classList.remove("hide");
+		coordSubmitBtn.classList.remove("hide");
+		shipLengthTitle.classList.remove("hide");
+
+		// Hide continue button
+		continueBtn.classList.add("hide");
+		continueBtn.addEventListener("click", resolveFinishPromise);
 
 		for (let ship of ships) {
 			shipLengthTitle.textContent = `Next ship length: ${ship.length} squares!`;
@@ -169,6 +188,7 @@ class GameManager {
 			};
 
 			this.handleRandomCoordListener = () => {
+				isRandom = true;
 				let randomCoordinate = player.gameboard.getRandomCoordinates(
 					player,
 					ship.length
@@ -193,6 +213,22 @@ class GameManager {
 				this.handleRandomCoordListener
 			);
 
+			// Place ships automatically if user click to random
+			if (isRandom) {
+				let randomCoordinate = player.gameboard.getRandomCoordinates(
+					player,
+					ship.length
+				);
+
+				this.handleCoordInput.bind(
+					this,
+					player,
+					ship,
+					randomCoordinate,
+					resolveCoordinates
+				)();
+			}
+
 			// Wait until the current ship is placed
 			await coordinatePromise;
 
@@ -206,6 +242,17 @@ class GameManager {
 				this.handleCoordInputListener
 			);
 		}
+		// Show continue button
+		continueBtn.classList.remove("hide");
+
+		// Hide coords input elements
+		randomPlacementBtn.classList.add("hide");
+		coordInput.classList.add("hide");
+		coordSubmitBtn.classList.add("hide");
+		shipLengthTitle.classList.add("hide");
+
+		await finishPromise;
+		continueBtn.removeEventListener("click", resolveFinishPromise);
 	}
 
 	handleCoordInput(player, ship, coordinate, resolveCoordinates) {
@@ -239,8 +286,6 @@ class GameManager {
 			coordInput.value = "";
 		}
 	}
-
-	// TODO: move to gameboard.js because it's a coordinate-related function
 
 	async startBattlePhase() {
 		let resolveBattle;
