@@ -16,7 +16,8 @@ const OpponentAttackBoard = gameboardsContainer.querySelector(
 );
 const passDevicePage = document.querySelector("#pass-device-page");
 const passDeviceBtn = document.querySelector("#pass-btn");
-const startGameBtn = document.querySelector("#start-game-btn");
+const startGameFriendBtn = document.querySelector("#start-game-vs-friend-btn");
+const startGameCPUBtn = document.querySelector("#start-game-vs-computer-btn");
 const restartGameBtn = document.querySelector("#restart-game-btn");
 const returnHomeBtn = document.querySelector("#return-home-btn");
 const startPlacingBtn = document.querySelector("#start-placing-btn");
@@ -66,7 +67,9 @@ class GameManager {
 		this.player2.gameboard.boardElement = playerBoard2;
 	}
 
-	async startGame() {
+	async startGame(mode) {
+		this.mode = mode;
+
 		this.resetGame();
 		this.initializeGame();
 
@@ -77,7 +80,34 @@ class GameManager {
 		);
 
 		// Let players take turns for placing
-		for (let i = 0; i < 2; i++) {
+		if (mode == "friend") {
+			for (let i = 0; i < 2; i++) {
+				this.startPlacementPromise = new Promise((resolve) => {
+					this.startPlacingListener = () => {
+						startPlacingBtn.removeEventListener(
+							"click",
+							this.startPlacingListener
+						);
+						resolve();
+					};
+
+					startPlacingBtn.addEventListener(
+						"click",
+						this.startPlacingListener
+					);
+				});
+
+				await this.startPlacementPromise;
+				await this.placementPhase();
+			}
+
+			// BATTLE PHASE
+			await this.battlePhase();
+
+			// SHOW WINNER PHASE
+			this.gameOver();
+		} else {
+			// Let player 1 place their ships.
 			this.startPlacementPromise = new Promise((resolve) => {
 				this.startPlacingListener = () => {
 					startPlacingBtn.removeEventListener(
@@ -95,13 +125,13 @@ class GameManager {
 
 			await this.startPlacementPromise;
 			await this.placementPhase();
+
+			// Place cpu ships
+			this.handleCpuPlaceShip();
+
+			// Place cpu boards
+			this.swapTurns();
 		}
-
-		// BATTLE PHASE
-		await this.battlePhase();
-
-		// SHOW WINNER PHASE
-		this.gameOver();
 	}
 
 	async placementPhase() {
@@ -141,14 +171,27 @@ class GameManager {
 		}
 	}
 
+	handleCpuPlaceShip() {
+		const cpu = this.player2;
+		const ships = this.createShips();
+		for (let ship of ships) {
+			let randomCoordinate = cpu.gameboard.getRandomCoordinates(
+				cpu,
+				ship.length
+			);
+
+			this.handleCoordInput(cpu, ship, randomCoordinate);
+		}
+	}
+
 	async handlePlaceShip(player) {
 		const ships = this.createShips();
 		let isRandom = false;
 
 		// Create promise to finish the placing when user click continue
-		let resolveFinishPromise;
+		this.resolveFinishPromise;
 		const finishPromise = new Promise((resolve) => {
-			resolveFinishPromise = resolve;
+			this.resolveFinishPromise = resolve;
 		});
 
 		// Remove hide class
@@ -159,7 +202,7 @@ class GameManager {
 
 		// Hide continue button
 		continueBtn.classList.add("hide");
-		continueBtn.addEventListener("click", resolveFinishPromise);
+		continueBtn.addEventListener("click", this.resolveFinishPromise);
 
 		for (let ship of ships) {
 			shipLengthTitle.textContent = `Next ship length: ${ship.length} squares!`;
@@ -248,10 +291,10 @@ class GameManager {
 		shipLengthTitle.classList.add("hide");
 
 		await finishPromise;
-		continueBtn.removeEventListener("click", resolveFinishPromise);
+		continueBtn.removeEventListener("click", this.resolveFinishPromise);
 	}
 
-	handleCoordInput(player, ship, coordinate, resolveCoordinates) {
+	handleCoordInput(player, ship, coordinate, resolveCoordinates = null) {
 		const coordResult = player.gameboard.validateCoordinates(
 			coordinate,
 			ship.length
@@ -275,7 +318,10 @@ class GameManager {
 				player.gameboard.board,
 				"add"
 			);
-			resolveCoordinates();
+
+			if (resolveCoordinates) {
+				resolveCoordinates();
+			}
 			coordInput.value = "";
 		} else {
 			alert("Invalid coordinate.");
@@ -465,6 +511,12 @@ class GameManager {
 
 const Game = new GameManager();
 
-startGameBtn.addEventListener("click", Game.startGame.bind(Game));
+startGameFriendBtn.addEventListener(
+	"click",
+	Game.startGame.bind(Game, "friend")
+);
+
+startGameCPUBtn.addEventListener("click", Game.startGame.bind(Game, "cpu"));
+
 restartGameBtn.addEventListener("click", Game.startGame.bind(Game));
 returnHomeBtn.addEventListener("click", Game.returnHome.bind(Game));
