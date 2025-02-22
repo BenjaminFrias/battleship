@@ -29,13 +29,10 @@ const currentPlaceGameboard = document.querySelector(
 );
 const continueBtn = document.querySelector("#continue-placing-btn");
 
-// TODO: Refactor: Change battle phase to a single attacking page
-
-// TODO: Feature: Place ships coords using clicks.
-// TODO: Feature: validate coords to return different errors to show to the user
-// TODO: Feature: Drag and Drop feature for placing ships.
-// TODO: Feature: Ships' graveyard.
 // TODO: Feature: vs computer gameplay.
+// TODO: Feature: Drag and Drop feature for placing ships.
+// TODO: Feature: validate coords to return different errors to show to the user
+// TODO: Feature: Ships' graveyard.
 class GameManager {
 	constructor() {
 		this.domHandler = null;

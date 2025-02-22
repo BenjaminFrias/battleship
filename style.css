@@ -255,6 +255,12 @@ h2#start-placing-title {
 	justify-content: center;
 	align-items: center;
 	background: var(--neo-blue);
+	padding: 50px;
+}
+
+#current-placing-gameboard {
+	width: 600px;
+	height: 600px;
 }
 
 .sidebar {
@@ -507,6 +513,8 @@ h2#start-placing-title {
 #battle-page {
 	display: flex;
 	flex-direction: column;
+	justify-content: center;
+	align-items: center;
 	flex: 1 1 auto;
 	background: var(--neo-blue);
 }
@@ -541,18 +549,29 @@ h2#start-placing-title {
 	display: none;
 }
 
+#battle-sidebar {
+	width: 40%;
+	height: 70px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-radius: 15px;
+	margin: 5px;
+}
+
 .battle-sidebar-container {
 	display: flex;
-	display: none;
 	justify-content: center;
-	padding-top: 80px;
-	padding-bottom: 20px;
+	align-items: center;
 	width: 100%;
+	height: 100%;
+	margin: 5px 0px;
+	border-radius: 20px;
 }
 
 .battle-sidebar-container ol {
 	display: flex;
-	flex-direction: column;
+	padding: 0px;
 	gap: 20px;
 }
 
@@ -564,19 +583,19 @@ h2#start-placing-title {
 
 .battle-sidebar-container ol li p {
 	display: flex;
-	margin: 0;
+	margin: 0px 0px -4px 0px;
 	font-family: "Inter", Arial, Helvetica, sans-serif;
 	font-weight: 700;
-	font-size: 1.3rem;
-	color: black;
+	font-size: 1.2rem;
+	color: var(--dark-blue);
 }
 
 .cell-example {
-	width: 40px;
-	height: 40px;
+	width: 35px;
+	height: 35px;
 	background: white;
 	box-shadow: 3px 3px black;
-	border: 3px solid black;
+	border: 2px solid black;
 	border-radius: 10px;
 }
 
@@ -597,9 +616,9 @@ h2#start-placing-title {
 .cell-example.hit::before {
 	content: "";
 	display: inline-block;
-	width: 15px;
-	height: 15px;
-	margin-right: -2.57rem;
+	width: 8px;
+	height: 8px;
+	margin-right: -1.5rem;
 	border-left: 4px solid black;
 	border-bottom: 4px solid black;
 	transform: rotate(45deg);
@@ -608,8 +627,8 @@ h2#start-placing-title {
 .cell-example.hit::after {
 	content: "";
 	display: inline-block;
-	width: 15px;
-	height: 15px;
+	width: 8px;
+	height: 8px;
 	border-left: 4px solid black;
 	border-bottom: 4px solid black;
 	transform: rotate(225deg);
@@ -632,6 +651,8 @@ h2#start-placing-title {
 	display: grid;
 	grid-template-columns: repeat(10, 1fr);
 	grid-template-rows: repeat(10, 1fr);
+	height: 100%;
+	width: 100%;
 }
 
 #player-gameboard.hide,
