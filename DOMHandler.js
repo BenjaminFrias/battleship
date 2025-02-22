@@ -2,6 +2,12 @@ export class DOMHandler {
 	constructor() {
 		this.GRIDSIZE = 10;
 		this.gameboardContainer = document.querySelector("#gameboard");
+		this.player1GameboardContainer = document.querySelector(
+			".current-attack-board"
+		);
+		this.player2GameboardContainer = document.querySelector(
+			".current-opponent-attack-board"
+		);
 		this.pages = document.querySelectorAll("div.page");
 		this.cells = [];
 	}
@@ -14,8 +20,8 @@ export class DOMHandler {
 		this.opponentGameboard = document.createElement("div");
 		this.opponentGameboard.id = "opponent-gameboard";
 
-		this.gameboardContainer.appendChild(this.playerGameboard);
-		this.gameboardContainer.appendChild(this.opponentGameboard);
+		this.player1GameboardContainer.appendChild(this.playerGameboard);
+		this.player2GameboardContainer.appendChild(this.opponentGameboard);
 
 		// Create cells
 		for (let row = 0; row < this.GRIDSIZE; row++) {
@@ -82,6 +88,10 @@ export class DOMHandler {
 				}
 			});
 		}
+	}
+
+	moveBoard(board, container) {
+		container.appendChild(board);
 	}
 
 	showPageWithTitle(pageToShow, playerName) {

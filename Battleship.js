@@ -10,11 +10,9 @@ const battlePage = document.querySelector("#battle-page");
 const winnerPage = document.querySelector("#winner-page");
 const coordsContainer = document.querySelector("#coordinates-input-container");
 const gameboardsContainer = document.querySelector("#gameboard");
-const currentAttackBoard = gameboardsContainer.querySelector(
-	".current-attack-board"
-);
-const currentOpponentAttackBoard = gameboardsContainer.querySelector(
-	".current-attack-board"
+const AttackBoard = gameboardsContainer.querySelector(".current-attack-board");
+const OpponentAttackBoard = gameboardsContainer.querySelector(
+	".current-opponent-attack-board"
 );
 const passDevicePage = document.querySelector("#pass-device-page");
 const passDeviceBtn = document.querySelector("#pass-btn");
@@ -111,7 +109,7 @@ class GameManager {
 
 	async placementPhase() {
 		// move board and show title
-		moveBoard(
+		this.domHandler.moveBoard(
 			this.currentPlayer.gameboard.boardElement,
 			currentPlaceGameboard
 		);
@@ -123,7 +121,7 @@ class GameManager {
 		// Manage placing players' turns
 		await this.handlePlaceShip(this.currentPlayer);
 
-		moveBoard(
+		this.domHandler.moveBoard(
 			this.currentPlayer.gameboard.boardElement,
 			gameboardsContainer
 		);
@@ -139,14 +137,10 @@ class GameManager {
 				placeShipsPage,
 				this.currentPlayer.name
 			);
-			moveBoard(
+			this.domHandler.moveBoard(
 				this.currentPlayer.gameboard.boardElement,
 				currentPlaceGameboard
 			);
-		}
-
-		function moveBoard(board, container) {
-			container.appendChild(board);
 		}
 	}
 
@@ -303,6 +297,8 @@ class GameManager {
 
 		this.domHandler.showPageWithTitle(passDevicePage, "");
 
+		setAttackBoards.bind(this)();
+
 		// Remove all ships classes from boards
 		this.domHandler.toggleShips(
 			this.currentOpponent.id,
@@ -332,12 +328,9 @@ class GameManager {
 				// Remove text content when user attacks
 				if (result == "miss") {
 					this.swapTurns();
+					this.toggleBlockBoards();
 
 					// TODO: show current player name and block currentOpponent board
-					this.domHandler.showPageWithTitle(
-						passDevicePage,
-						this.currentPlayer.name
-					);
 				} else if (result == "gameOver") {
 					resolveBattle();
 				} else if (result == "prevShoot") {
@@ -347,6 +340,33 @@ class GameManager {
 		});
 
 		await battlePromise;
+
+		function setAttackBoards() {
+			// Move boards
+			this.domHandler.moveBoard(
+				this.currentPlayer.gameboard.boardElement,
+				AttackBoard
+			);
+
+			this.domHandler.moveBoard(
+				this.currentOpponent.gameboard.boardElement,
+				OpponentAttackBoard
+			);
+
+			const player1Name = gameboardsContainer.querySelector(
+				"div.current-attack-board > h2"
+			);
+
+			const player2Name = gameboardsContainer.querySelector(
+				"div.current-opponent-attack-board > h2"
+			);
+
+			player1Name.textContent = `${this.currentPlayer.name}'s board`;
+			player2Name.textContent = `${this.currentOpponent.name}'s board`;
+
+			// Block current player board
+			this.currentPlayer.gameboard.boardElement.classList.add("blocked");
+		}
 	}
 
 	handleAttack(cell) {
@@ -412,7 +432,15 @@ class GameManager {
 		this.currentOpponent = this.player2;
 
 		// Remove boards elements
-		gameboardsContainer.textContent = "";
+		const player1Board = AttackBoard.querySelector("#player-gameboard");
+		const player2Board = OpponentAttackBoard.querySelector(
+			"#opponent-gameboard"
+		);
+
+		if (player1Board && player2Board) {
+			player1Board.remove();
+			player2Board.remove();
+		}
 
 		// Remove event listeners
 		startPlacingBtn.removeEventListener("click", this.startPlacingListener);
@@ -432,6 +460,11 @@ class GameManager {
 			this.currentOpponent,
 			this.currentPlayer,
 		];
+	}
+
+	toggleBlockBoards() {
+		this.currentOpponent.gameboard.boardElement.classList.remove("blocked");
+		this.currentPlayer.gameboard.boardElement.classList.add("blocked");
 	}
 }
 

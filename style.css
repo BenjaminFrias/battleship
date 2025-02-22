@@ -506,6 +506,7 @@ h2#start-placing-title {
 
 #battle-page {
 	display: flex;
+	flex-direction: column;
 	flex: 1 1 auto;
 	background: var(--neo-blue);
 }
@@ -515,18 +516,34 @@ h2#start-placing-title {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	flex-basis: 100%;
-	gap: 50px;
+	flex: 100%;
+	gap: 30px;
+}
+
+#gameboard > div {
+	display: flex;
+	flex-direction: column;
+	height: 550px;
+	width: 500px;
+}
+
+#gameboard > div > h2 {
+	margin: 10px 0px;
+	font-family: "Inter", Arial, Helvetica, sans-serif;
+	font-weight: 600;
+	color: white;
 }
 
 #attack-title {
 	align-self: flex-start;
 	width: 98%;
 	box-sizing: border-box;
+	display: none;
 }
 
 .battle-sidebar-container {
 	display: flex;
+	display: none;
 	justify-content: center;
 	padding-top: 80px;
 	padding-bottom: 20px;
@@ -611,9 +628,10 @@ h2#start-placing-title {
 
 #player-gameboard,
 #opponent-gameboard {
+	flex: 1;
 	display: grid;
-	grid-template-columns: repeat(10, 60px);
-	grid-template-rows: repeat(10, 60px);
+	grid-template-columns: repeat(10, 1fr);
+	grid-template-rows: repeat(10, 1fr);
 }
 
 #player-gameboard.hide,
