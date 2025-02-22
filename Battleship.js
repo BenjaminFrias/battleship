@@ -10,6 +10,12 @@ const battlePage = document.querySelector("#battle-page");
 const winnerPage = document.querySelector("#winner-page");
 const coordsContainer = document.querySelector("#coordinates-input-container");
 const gameboardsContainer = document.querySelector("#gameboard");
+const currentAttackBoard = gameboardsContainer.querySelector(
+	".current-attack-board"
+);
+const currentOpponentAttackBoard = gameboardsContainer.querySelector(
+	".current-attack-board"
+);
 const passDevicePage = document.querySelector("#pass-device-page");
 const passDeviceBtn = document.querySelector("#pass-btn");
 const startGameBtn = document.querySelector("#start-game-btn");
@@ -25,7 +31,6 @@ const currentPlaceGameboard = document.querySelector(
 );
 const continueBtn = document.querySelector("#continue-placing-btn");
 
-// TODO: Feature: place all ship's randomly by cliking random once
 // TODO: Refactor: Change battle phase to a single attacking page
 
 // TODO: Feature: Place ships coords using clicks.
@@ -98,7 +103,7 @@ class GameManager {
 		}
 
 		// BATTLE PHASE
-		await this.startBattlePhase();
+		await this.battlePhase();
 
 		// SHOW WINNER PHASE
 		this.gameOver();
@@ -287,16 +292,16 @@ class GameManager {
 		}
 	}
 
-	async startBattlePhase() {
+	// TODO: show only one start battle phase
+	// TODO: show both boards with players name up on it.
+	// TODO: Avoid attacking currentPlayer board
+	async battlePhase() {
 		let resolveBattle;
 		const battlePromise = new Promise((resolve) => {
 			resolveBattle = resolve;
 		});
 
-		this.domHandler.showPageWithTitle(
-			passDevicePage,
-			this.currentPlayer.name
-		);
+		this.domHandler.showPageWithTitle(passDevicePage, "");
 
 		// Remove all ships classes from boards
 		this.domHandler.toggleShips(
@@ -314,11 +319,7 @@ class GameManager {
 		passDeviceBtn.addEventListener("click", passDevice.bind(this));
 
 		function passDevice() {
-			this.domHandler.showPageWithTitle(
-				battlePage,
-				this.currentOpponent.name
-			);
-			this.domHandler.showGameboard(this.currentOpponent.id);
+			this.domHandler.showPageWithTitle(battlePage, "players");
 		}
 
 		// handle attack for every cell
@@ -332,6 +333,7 @@ class GameManager {
 				if (result == "miss") {
 					this.swapTurns();
 
+					// TODO: show current player name and block currentOpponent board
 					this.domHandler.showPageWithTitle(
 						passDevicePage,
 						this.currentPlayer.name

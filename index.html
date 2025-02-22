@@ -99,10 +99,7 @@
 				<!-- Gameboards -->
 				<div id="pass-device-page" class="page hide">
 					<div id="pass-device-content">
-						<h2 id="pass-device-title">
-							<span class="player-name"></span>
-							, Attack!
-						</h2>
+						<h2 id="pass-device-title">Battle phase!</h2>
 						<button id="pass-btn">Attack!</button>
 						<div class="star star-1"></div>
 						<div class="star star-2"></div>
@@ -113,9 +110,7 @@
 				<div id="battle-page" class="page hide">
 					<div id="battle-sidebar" class="sidebar">
 						<h2 id="attack-title" class="sidebar-title">
-							Click a cell to attack
-							<span class="player-name"></span>
-							' board!
+							Click a cell to attack!
 						</h2>
 						<div class="sidebar-container battle-sidebar-container">
 							<ol>
@@ -134,7 +129,10 @@
 							</ol>
 						</div>
 					</div>
-					<div id="gameboard"></div>
+					<div id="gameboard">
+						<div class="current-attack-board"></div>
+						<div class="current-opponent-attack-board"></div>
+					</div>
 				</div>
 
 				<!-- Winner and Restart page -->
