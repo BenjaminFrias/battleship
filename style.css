@@ -642,6 +642,7 @@ h2#start-placing-title {
 #player-gameboard.blocked,
 #opponent-gameboard.blocked {
 	pointer-events: none;
+	opacity: 50%;
 }
 
 /* CELL */

@@ -328,9 +328,7 @@ class GameManager {
 				// Remove text content when user attacks
 				if (result == "miss") {
 					this.swapTurns();
-					this.toggleBlockBoards();
-
-					// TODO: show current player name and block currentOpponent board
+					this.toggleAttackBoards();
 				} else if (result == "gameOver") {
 					resolveBattle();
 				} else if (result == "prevShoot") {
@@ -462,7 +460,7 @@ class GameManager {
 		];
 	}
 
-	toggleBlockBoards() {
+	toggleAttackBoards() {
 		this.currentOpponent.gameboard.boardElement.classList.remove("blocked");
 		this.currentPlayer.gameboard.boardElement.classList.add("blocked");
 	}
