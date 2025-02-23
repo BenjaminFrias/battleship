@@ -129,6 +129,14 @@ class GameManager {
 			// Place cpu ships
 			this.handleCpuPlaceShip();
 
+			// Start battle
+			this.swapTurns();
+			this.battlePhase();
+
+			// TODO: fix player 1 attack
+
+			// TODO: add computer intelligence to attack automatically and randomly
+
 			// Place cpu boards
 			this.swapTurns();
 		}
@@ -172,15 +180,15 @@ class GameManager {
 	}
 
 	handleCpuPlaceShip() {
-		const cpu = this.player2;
+		const player = this.player2;
 		const ships = this.createShips();
 		for (let ship of ships) {
-			let randomCoordinate = cpu.gameboard.getRandomCoordinates(
-				cpu,
+			let randomCoordinate = player.gameboard.getRandomCoordinates(
+				player,
 				ship.length
 			);
 
-			this.handleCoordInput(cpu, ship, randomCoordinate);
+			this.handleCoordInput(player, ship, randomCoordinate);
 		}
 	}
 
@@ -365,13 +373,21 @@ class GameManager {
 		const cells = document.querySelectorAll(".board-cell");
 		cells.forEach((cell) => {
 			cell.textContent = "";
+
+			if (
+				(this.mode =
+					"cpu" && cell.classList.contains("player-gameboard"))
+			) {
+				cell.classList.add("blocked");
+			}
+
 			cell.addEventListener("click", () => {
 				const result = this.handleAttack(cell);
 
 				// Remove text content when user attacks
 				if (result == "miss") {
-					this.swapTurns();
 					this.toggleAttackBoards();
+					this.swapTurns();
 				} else if (result == "gameOver") {
 					resolveBattle();
 				} else if (result == "prevShoot") {

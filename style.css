@@ -706,6 +706,10 @@ h2#start-placing-title {
 	animation: destroy 200ms ease;
 }
 
+.board-cell.player-gameboard.blocked {
+	pointer-events: none;
+}
+
 @keyframes destroy {
 	0% {
 		scale: 1;
