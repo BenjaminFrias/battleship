@@ -133,8 +133,6 @@ class GameManager {
 			this.swapTurns();
 			this.battlePhase();
 
-			// TODO: fix player 1 attack
-
 			// TODO: add computer intelligence to attack automatically and randomly
 
 			// Place cpu boards
@@ -374,6 +372,7 @@ class GameManager {
 		cells.forEach((cell) => {
 			cell.textContent = "";
 
+			// Block player cells in cpu mode
 			if (
 				(this.mode =
 					"cpu" && cell.classList.contains("player-gameboard"))
@@ -387,6 +386,10 @@ class GameManager {
 				// Remove text content when user attacks
 				if (result == "miss") {
 					this.toggleAttackBoards();
+
+					if (this.currentPlayer == this.player2) {
+						this.cpuAttack();
+					}
 					this.swapTurns();
 				} else if (result == "gameOver") {
 					resolveBattle();
@@ -461,6 +464,31 @@ class GameManager {
 		} else if (attackResult == "prevShoot") {
 			return "prevShoot";
 		}
+	}
+
+	cpuAttack() {
+		const player = this.currentPlayer;
+		let randomCoordinate = player.gameboard.getRandomCoordinates(player, 1);
+
+		// random coordinate in numbers
+
+		const coordNumb =
+			player.gameboard.transformCoordinates(randomCoordinate)[0];
+
+		const playerCells = document.querySelectorAll(
+			`.board-cell.player-gameboard`
+		);
+
+		const cells = Array.from(playerCells);
+
+		const cellElement = cells.filter(
+			(cell) => cell.dataset.coords == `${coordNumb[0]}-${coordNumb[0]}`
+		);
+
+		console.log(randomCoordinate);
+
+		console.log(cellElement);
+		cellElement[0].classList.add("asdf");
 	}
 
 	createShips() {

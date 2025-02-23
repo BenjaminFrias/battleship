@@ -707,7 +707,11 @@ h2#start-placing-title {
 }
 
 .board-cell.player-gameboard.blocked {
-	pointer-events: none;
+	/* pointer-events: none; */
+}
+
+*.asdf {
+	background-color: red !important;
 }
 
 @keyframes destroy {
