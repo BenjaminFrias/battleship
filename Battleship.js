@@ -367,36 +367,69 @@ class GameManager {
 			this.domHandler.showPageWithTitle(battlePage, "players");
 		}
 
-		// handle attack for every cell
+		// Handle attack for every cell
 		const cells = document.querySelectorAll(".board-cell");
+
+		// Hide each cells' coords
 		cells.forEach((cell) => {
 			cell.textContent = "";
 
 			// Block player cells in cpu mode
 			if (
-				(this.mode =
-					"cpu" && cell.classList.contains("player-gameboard"))
+				this.mode == "cpu" &&
+				cell.classList.contains("player-gameboard")
 			) {
 				cell.classList.add("blocked");
 			}
+		});
 
-			cell.addEventListener("click", () => {
-				const result = this.handleAttack(cell);
+		// attack and receive result of attack and swap turns
+		this.handleAttackListener = (cell) => {
+			const result = this.handleAttack(cell);
 
-				// Remove text content when user attacks
-				if (result == "miss") {
-					this.toggleAttackBoards();
+			// Remove text content when user attacks
+			if (result == "miss") {
+				this.toggleAttackBoards();
 
-					if (this.currentPlayer == this.player2) {
+				if (this.currentPlayer == this.player2 && this.mode == "cpu") {
+					console.log("cpu is thinking");
+					setTimeout(() => {
+						console.log("player 2 attacked");
 						this.cpuAttack();
-					}
-					this.swapTurns();
-				} else if (result == "gameOver") {
-					resolveBattle();
-				} else if (result == "prevShoot") {
-					alert("You attacked that cell already");
+					}, 1000);
 				}
-			});
+				console.log(
+					"Change turns, currPla, currOpo:",
+					this.currentPlayer,
+					this.currentOpponent
+				);
+				this.swapTurns();
+			} else if (result == "gameOver") {
+				resolveBattle();
+			} else if (result == "prevShoot") {
+				alert("You attacked that cell already");
+			} else {
+				console.log("hit");
+
+				// if (this.currentPlayer == this.player2 && this.mode == "cpu") {
+				// 	console.log("CPU HIT");
+				// }
+				// if (this.currentPlayer == this.player1 && this.mode == "cpu") {
+				// 	console.log("cpu is thinking");
+				// 	setTimeout(() => {
+				// 		console.log("PLAYER 2 ATTACKED");
+				// 		this.cpuAttack();
+				// 	}, 1000);
+				// }
+			}
+		};
+
+		// Add handle attack listeners to cells
+		cells.forEach((cell) => {
+			cell.addEventListener(
+				"click",
+				this.handleAttackListener.bind(this, cell)
+			);
 		});
 
 		await battlePromise;
@@ -468,27 +501,48 @@ class GameManager {
 
 	cpuAttack() {
 		const player = this.currentPlayer;
-		let randomCoordinate = player.gameboard.getRandomCoordinates(player, 1);
 
-		// random coordinate in numbers
+		let randomCoordinate;
+		let playerCells;
+		let cellElement;
+		let counter = 0;
+		do {
+			// Get random coord
+			randomCoordinate = player.gameboard.getRandomCoordinates(player, 1);
 
-		const coordNumb =
-			player.gameboard.transformCoordinates(randomCoordinate)[0];
+			const coordNumb =
+				player.gameboard.transformCoordinates(randomCoordinate)[0];
 
-		const playerCells = document.querySelectorAll(
-			`.board-cell.player-gameboard`
+			playerCells = document.querySelectorAll(
+				`.board-cell.player-gameboard`
+			);
+
+			// Get cell element from dataset of random coord
+			const cells = Array.from(playerCells);
+			cellElement = cells.filter(
+				(cell) =>
+					cell.dataset.coords == `${coordNumb[0]}-${coordNumb[1]}`
+			)[0];
+
+			counter++;
+			console.log("counter", counter);
+
+			console.log(coordNumb);
+			console.log(cellElement);
+			console.log(
+				"cell element contains miss or hit?: ",
+				cellElement.classList.contains("miss") ||
+					cellElement.classList.contains("hit")
+			);
+		} while (
+			(cellElement.classList.contains("miss") ||
+				cellElement.classList.contains("hit")) &&
+			counter < 10
 		);
 
-		const cells = Array.from(playerCells);
+		console.log("Random attacked cell: ", cellElement);
 
-		const cellElement = cells.filter(
-			(cell) => cell.dataset.coords == `${coordNumb[0]}-${coordNumb[0]}`
-		);
-
-		console.log(randomCoordinate);
-
-		console.log(cellElement);
-		cellElement[0].classList.add("asdf");
+		this.handleAttackListener(cellElement);
 	}
 
 	createShips() {
