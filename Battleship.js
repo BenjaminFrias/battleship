@@ -136,7 +136,6 @@ class GameManager {
 			// TODO: add computer intelligence to attack automatically and randomly
 
 			// Place cpu boards
-			this.swapTurns();
 		}
 	}
 
@@ -335,9 +334,7 @@ class GameManager {
 		}
 	}
 
-	// TODO: show only one start battle phase
-	// TODO: show both boards with players name up on it.
-	// TODO: Avoid attacking currentPlayer board
+	// TODO: fix(friend mode): prevent double attack on first turn
 	async battlePhase() {
 		let resolveBattle;
 		const battlePromise = new Promise((resolve) => {
@@ -391,18 +388,19 @@ class GameManager {
 
 			// Remove text content when user attacks
 			if (result == "miss") {
-				this.toggleAttackBoards();
-				if (this.currentPlayer == this.player2 && this.mode == "cpu") {
+				// Let cpu attack if player 1 missed.
+				if (this.currentPlayer == this.player1 && this.mode == "cpu") {
 					setTimeout(() => {
 						this.cpuAttack();
 					}, CPU_DELAY);
 				}
 
 				this.swapTurns();
+				this.toggleAttackBoards();
 			} else if (result == "gameOver") {
 				resolveBattle();
 			} else if (result == "prevShoot") {
-				if (this.currentPlayer == this.player1 && this.mode == "cpu") {
+				if (this.currentPlayer == this.player2 && this.mode == "cpu") {
 					setTimeout(() => {
 						this.cpuAttack();
 					}, CPU_DELAY);
@@ -410,7 +408,7 @@ class GameManager {
 					alert("You attacked that cell already");
 				}
 			} else {
-				if (this.currentPlayer == this.player1 && this.mode == "cpu") {
+				if (this.currentPlayer == this.player2 && this.mode == "cpu") {
 					setTimeout(() => {
 						this.cpuAttack();
 					}, CPU_DELAY);
