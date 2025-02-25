@@ -34,7 +34,6 @@ export class Gameboard {
 		if (this.prevShoots.has(coordString)) {
 			return "prevShoot";
 		}
-
 		this.prevShoots.set(coordString, coordinates);
 
 		// If coordinates exist in board, hit ship
@@ -367,12 +366,36 @@ export class Gameboard {
 		}
 	}
 
+	getSingleRandomCoord() {
+		const letters = "ABCDEFGHIJ";
+		const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 10];
+
+		let singleRandomCoord;
+		let randomLetterIndex;
+		let randomNumber;
+		let MAX_RANGE = 9;
+
+		randomLetterIndex = Math.floor(Math.random() * MAX_RANGE);
+		randomNumber = numbers[Math.floor(Math.random() * MAX_RANGE)];
+		singleRandomCoord = letters[randomLetterIndex] + randomNumber;
+
+		console.log(singleRandomCoord);
+
+		return singleRandomCoord;
+	}
+
 	areAllShipsSunk() {
 		return this.ships.every((obj) => obj.ship.isDestroyed);
 	}
 
 	getPreviousShoots() {
 		return Array.from(this.prevShoots.keys());
+	}
+
+	setPreviousShoot(coord) {
+		// Coord = [0,1] => "0,1"
+		const coordString = coord.toString();
+		this.prevShoots.set(coordString);
 	}
 
 	getCoordinates(coordinates) {
