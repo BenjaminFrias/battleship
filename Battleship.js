@@ -131,7 +131,9 @@ class GameManager {
 
 			// Start battle
 			this.swapTurns();
-			this.battlePhase();
+			await this.battlePhase();
+
+			this.gameOver();
 
 			// TODO: add computer intelligence to attack automatically and randomly
 

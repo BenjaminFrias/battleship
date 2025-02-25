@@ -10,7 +10,6 @@
 html,
 body {
 	margin: 0;
-	overflow: hidden;
 }
 
 /* GENERAL */
@@ -25,7 +24,6 @@ body {
 	box-sizing: border-box;
 	width: 100vw;
 	height: 100vh;
-	overflow: hidden;
 }
 
 #main-game-container {
@@ -39,9 +37,13 @@ body {
 
 div.page {
 	flex-basis: 100%;
-	overflow: hidden;
 }
 
+#start-game-page,
+#start-placing-page,
+#pass-device-page {
+	overflow: hidden;
+}
 /* START PAGE */
 
 #start-game-page {
@@ -61,12 +63,19 @@ div.page {
 	position: relative;
 	margin: auto 0;
 	width: 90%;
-	height: 40%;
+	height: 45%;
 	transform: rotate(-15deg);
 	background: var(--ocean-blue);
 	border: 7px solid var(--dark-blue);
 	border-radius: 80px;
 	box-shadow: 9px 12px var(--dark-blue);
+}
+
+@media (max-width: 500px) {
+	#title-container {
+		height: 200px;
+		box-shadow: 6px 6px var(--dark-blue);
+	}
 }
 
 #game-title {
@@ -101,6 +110,24 @@ div.page {
 	transform: rotate(-130deg);
 	bottom: -100px;
 	right: -80px;
+}
+
+@media (max-width: 500px) {
+	.cannonball-1,
+	.cannonball-2 {
+		position: absolute;
+		height: 300px;
+		width: 300px;
+	}
+
+	.cannonball-1 {
+		top: -90px;
+	}
+
+	.cannonball-2 {
+		top: 330px;
+		right: -150px;
+	}
 }
 
 .start-game-btns-container {
@@ -169,6 +196,24 @@ div.page {
 	transform: rotate(-23deg);
 }
 
+@media (max-width: 500px) {
+	.decorative-ship-1,
+	.decorative-ship-2 {
+		width: 150px;
+		height: 60px;
+	}
+
+	.decorative-ship-1 {
+		left: 190px;
+		top: 120px;
+	}
+
+	.decorative-ship-2 {
+		left: 20px;
+		bottom: 180px;
+	}
+}
+
 /* START PLACING SHIPS PAGE */
 
 #start-placing-page {
@@ -210,6 +255,14 @@ h2#start-placing-title {
 	cursor: default;
 }
 
+@media (max-width: 500px) {
+	h2#start-placing-title {
+		width: 100%;
+		font-size: 13vw;
+		margin-bottom: 20px;
+	}
+}
+
 #start-placing-btn {
 	position: relative;
 	bottom: 0px;
@@ -226,6 +279,7 @@ h2#start-placing-title {
 	box-shadow: 4px 4px black;
 	cursor: pointer;
 	transition: all 200ms ease;
+	z-index: 999;
 }
 
 #start-placing-btn:hover {
@@ -250,12 +304,30 @@ h2#start-placing-title {
 	user-select: none;
 }
 
+@media (max-width: 500px) {
+	#decorative-place-ship {
+		transform: rotate(30deg);
+		bottom: -130px;
+	}
+}
+
 /* SET COORDINATES */
 
 #set-coordinates-page {
 	display: flex;
 	flex: 1 1 auto;
 	background: var(--neo-blue);
+}
+
+@media (max-width: 500px) {
+	#set-coordinates-page {
+		flex-direction: column;
+	}
+
+	#set-coordinates-title {
+		width: 80%;
+		margin: 0;
+	}
 }
 
 #current-board-container {
@@ -271,6 +343,17 @@ h2#start-placing-title {
 #current-placing-gameboard {
 	width: 600px;
 	height: 600px;
+}
+
+@media (max-width: 500px) {
+	#current-placing-gameboard {
+		width: 350px;
+		height: 350px;
+	}
+
+	#current-board-container {
+		padding: 20px 0px 20px 0px;
+	}
 }
 
 .sidebar {
@@ -425,6 +508,45 @@ h2#start-placing-title {
 	transition: all 200ms ease;
 }
 
+@media (max-width: 500px) {
+	.sidebar-container {
+		position: relative;
+	}
+
+	.sidebar {
+		width: 100vw;
+		margin: 0;
+		order: 1;
+	}
+
+	.sidebar-title {
+		position: relative;
+		width: 75%;
+		margin: 10px 0px;
+		height: 50px;
+		font-size: 1.4rem;
+		justify-content: center;
+	}
+
+	#placement-rules h3 {
+		font-size: 1.4rem;
+		margin: 0px 0px 10px 0px;
+	}
+
+	#placement-rules ol li {
+		font-size: 1.2rem;
+	}
+
+	#coordinates-input-container {
+		order: -1;
+	}
+
+	#ship-length {
+		font-size: 1.2rem;
+		order: -1;
+	}
+}
+
 /* NEXT TURN - PASS DEVICE PAGE  */
 
 #pass-device-page {
@@ -465,6 +587,12 @@ h2#start-placing-title {
 	cursor: default;
 }
 
+@media (max-width: 500px) {
+	#pass-device-title {
+		font-size: 4rem;
+	}
+}
+
 #pass-btn {
 	position: relative;
 	bottom: 0px;
@@ -481,6 +609,7 @@ h2#start-placing-title {
 	box-shadow: 4px 4px black;
 	cursor: pointer;
 	transition: all 200ms ease;
+	z-index: 999;
 }
 
 #pass-btn:hover {
@@ -516,6 +645,23 @@ h2#start-placing-title {
 	background-image: url(./assets/star-green.svg);
 	right: 50px;
 	bottom: -300px;
+}
+
+@media (max-width: 500px) {
+	.star-1 {
+		right: -200px;
+		bottom: -150px;
+	}
+
+	.star-2 {
+		bottom: -250px;
+		right: -40px;
+	}
+
+	.star-3 {
+		bottom: -200px;
+		left: -100px;
+	}
 }
 
 /* BATTLE PAGE */
@@ -579,6 +725,27 @@ h2#start-placing-title {
 	border-radius: 20px;
 }
 
+@media (max-width: 500px) {
+	#battle-page {
+		display: flex;
+		flex-direction: column;
+	}
+
+	#battle-page #gameboard {
+		display: flex;
+		flex-direction: column;
+		width: 100vw;
+		gap: 5px;
+		margin-bottom: 15px;
+		margin-top: 10px;
+	}
+
+	#battle-page #gameboard > div {
+		width: 90vw;
+		height: calc(90vw + 40px);
+	}
+}
+
 .battle-sidebar-container ol {
 	display: flex;
 	padding: 0px;
@@ -598,6 +765,12 @@ h2#start-placing-title {
 	font-weight: 700;
 	font-size: 1.2rem;
 	color: var(--dark-blue);
+}
+
+@media (max-width: 500px) {
+	.battle-sidebar-container ol li {
+		gap: 8px;
+	}
 }
 
 .cell-example {
@@ -760,6 +933,23 @@ h2#start-placing-title {
 	border-left: 4px solid black;
 	border-bottom: 4px solid black;
 	transform: rotate(225deg);
+}
+
+@media (max-width: 500px) {
+	.board-cell.hit::before {
+		width: 8px;
+		height: 8px;
+		margin-right: -1.5rem;
+		border-left: 4px solid black;
+		border-bottom: 4px solid black;
+	}
+
+	.board-cell.hit::after {
+		width: 8px;
+		height: 8px;
+		border-left: 4px solid black;
+		border-bottom: 4px solid black;
+	}
 }
 
 .board-cell.destroyed {
