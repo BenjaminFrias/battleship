@@ -103,28 +103,38 @@ div.page {
 	right: -80px;
 }
 
-#start-game-btn {
+.start-game-btns-container {
 	position: relative;
-	width: 250px;
-	height: 60px;
-	bottom: 60px;
+	display: flex;
+	gap: 15px;
+	bottom: 50px;
+}
+
+.start-game-btn {
+	position: relative;
 	right: 0px;
-	border-radius: 15px;
-	border: 3px solid white;
+	bottom: 0px;
+	padding: 10px 15px;
+	border-radius: 10px;
+	border: 2px solid white;
 	background: var(--ocean-blue);
 	color: white;
 	font-family: "Inter", Helvetica, sans-serif;
 	font-weight: 700;
-	font-size: 1.8rem;
+	font-size: 1.2rem;
 	cursor: pointer;
-	box-shadow: 4px 4px white;
+	box-shadow: 3px 3px white;
 	transition: all 150ms ease;
 }
 
-#start-game-btn:hover {
-	bottom: 65px;
-	right: 5px;
-	box-shadow: 9px 9px white;
+#start-game-vs-computer-btn {
+	background-color: #df5b49;
+}
+
+.start-game-btn:hover {
+	bottom: 3px;
+	right: 3px;
+	box-shadow: 6px 6px white;
 	transition: all 150ms ease;
 }
 
@@ -704,10 +714,6 @@ h2#start-placing-title {
 	align-items: center;
 	background-color: var(--neo-red);
 	animation: destroy 200ms ease;
-}
-
-.board-cell.player-gameboard.blocked {
-	/* pointer-events: none; */
 }
 
 *.asdf {
