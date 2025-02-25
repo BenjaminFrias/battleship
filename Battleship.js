@@ -390,37 +390,30 @@ class GameManager {
 			// Remove text content when user attacks
 			if (result == "miss") {
 				this.toggleAttackBoards();
-
 				if (this.currentPlayer == this.player2 && this.mode == "cpu") {
-					console.log("cpu is thinking");
 					setTimeout(() => {
-						console.log("player 2 attacked");
 						this.cpuAttack();
-					}, 1000);
+					}, 300);
 				}
-				console.log(
-					"Change turns, currPla, currOpo:",
-					this.currentPlayer,
-					this.currentOpponent
-				);
+
 				this.swapTurns();
 			} else if (result == "gameOver") {
 				resolveBattle();
 			} else if (result == "prevShoot") {
-				alert("You attacked that cell already");
+				if (this.currentPlayer == this.player1 && this.mode == "cpu") {
+					setTimeout(() => {
+						this.cpuAttack();
+					}, 300);
+				} else {
+					alert("You attacked that cell already");
+				}
 			} else {
-				console.log("hit");
-
-				// if (this.currentPlayer == this.player2 && this.mode == "cpu") {
-				// 	console.log("CPU HIT");
-				// }
-				// if (this.currentPlayer == this.player1 && this.mode == "cpu") {
-				// 	console.log("cpu is thinking");
-				// 	setTimeout(() => {
-				// 		console.log("PLAYER 2 ATTACKED");
-				// 		this.cpuAttack();
-				// 	}, 1000);
-				// }
+				if (this.currentPlayer == this.player1 && this.mode == "cpu") {
+					console.log("cpu is thinking");
+					setTimeout(() => {
+						this.cpuAttack();
+					}, 300);
+				}
 			}
 		};
 
@@ -500,48 +493,24 @@ class GameManager {
 	}
 
 	cpuAttack() {
-		const player = this.currentPlayer;
-
-		let randomCoordinate;
-		let playerCells;
-		let cellElement;
-		let counter = 0;
-		do {
-			// Get random coord
-			randomCoordinate = player.gameboard.getRandomCoordinates(player, 1);
-
-			const coordNumb =
-				player.gameboard.transformCoordinates(randomCoordinate)[0];
-
-			playerCells = document.querySelectorAll(
-				`.board-cell.player-gameboard`
-			);
-
-			// Get cell element from dataset of random coord
-			const cells = Array.from(playerCells);
-			cellElement = cells.filter(
-				(cell) =>
-					cell.dataset.coords == `${coordNumb[0]}-${coordNumb[1]}`
-			)[0];
-
-			counter++;
-			console.log("counter", counter);
-
-			console.log(coordNumb);
-			console.log(cellElement);
-			console.log(
-				"cell element contains miss or hit?: ",
-				cellElement.classList.contains("miss") ||
-					cellElement.classList.contains("hit")
-			);
-		} while (
-			(cellElement.classList.contains("miss") ||
-				cellElement.classList.contains("hit")) &&
-			counter < 10
+		const player = this.player1;
+		let playerCells = document.querySelectorAll(
+			`.board-cell.player-gameboard`
 		);
 
-		console.log("Random attacked cell: ", cellElement);
+		// Get random coordinate
+		let randomCoordinate = player.gameboard.getSingleRandomCoord(player, 1);
 
+		const coordNumb =
+			player.gameboard.transformCoordinates(randomCoordinate)[0];
+
+		// Get cell element from dataset of random coord
+		const cells = Array.from(playerCells);
+		let cellElement = cells.filter(
+			(cell) => cell.dataset.coords == `${coordNumb[0]}-${coordNumb[1]}`
+		)[0];
+
+		// Attack cell
 		this.handleAttackListener(cellElement);
 	}
 
