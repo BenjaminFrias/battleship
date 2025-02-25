@@ -334,14 +334,13 @@ class GameManager {
 		}
 	}
 
-	// TODO: fix(friend mode): prevent double attack on first turn
 	async battlePhase() {
 		let resolveBattle;
 		const battlePromise = new Promise((resolve) => {
 			resolveBattle = resolve;
 		});
 
-		const CPU_DELAY = 1000;
+		const CPU_DELAY = 800;
 
 		this.domHandler.showPageWithTitle(passDevicePage, "");
 

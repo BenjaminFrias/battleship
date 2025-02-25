@@ -702,6 +702,19 @@ h2#start-placing-title {
 
 .board-cell.miss {
 	background: gray;
+	animation: miss 200ms ease;
+}
+
+@keyframes miss {
+	0% {
+		scale: 1;
+	}
+	50% {
+		scale: 0.5;
+	}
+	100% {
+		scale: 1;
+	}
 }
 
 .board-cell.ship {
@@ -714,10 +727,6 @@ h2#start-placing-title {
 	align-items: center;
 	background-color: var(--neo-red);
 	animation: destroy 200ms ease;
-}
-
-*.asdf {
-	background-color: red !important;
 }
 
 @keyframes destroy {
