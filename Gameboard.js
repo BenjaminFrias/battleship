@@ -379,8 +379,6 @@ export class Gameboard {
 		randomNumber = numbers[Math.floor(Math.random() * MAX_RANGE)];
 		singleRandomCoord = letters[randomLetterIndex] + randomNumber;
 
-		console.log(singleRandomCoord);
-
 		return singleRandomCoord;
 	}
 

@@ -344,6 +344,8 @@ class GameManager {
 			resolveBattle = resolve;
 		});
 
+		const CPU_DELAY = 1000;
+
 		this.domHandler.showPageWithTitle(passDevicePage, "");
 
 		setAttackBoards.bind(this)();
@@ -393,7 +395,7 @@ class GameManager {
 				if (this.currentPlayer == this.player2 && this.mode == "cpu") {
 					setTimeout(() => {
 						this.cpuAttack();
-					}, 300);
+					}, CPU_DELAY);
 				}
 
 				this.swapTurns();
@@ -403,26 +405,35 @@ class GameManager {
 				if (this.currentPlayer == this.player1 && this.mode == "cpu") {
 					setTimeout(() => {
 						this.cpuAttack();
-					}, 300);
+					}, CPU_DELAY);
 				} else {
 					alert("You attacked that cell already");
 				}
 			} else {
 				if (this.currentPlayer == this.player1 && this.mode == "cpu") {
-					console.log("cpu is thinking");
 					setTimeout(() => {
 						this.cpuAttack();
-					}, 300);
+					}, CPU_DELAY);
 				}
 			}
 		};
 
 		// Add handle attack listeners to cells
 		cells.forEach((cell) => {
-			cell.addEventListener(
-				"click",
-				this.handleAttackListener.bind(this, cell)
-			);
+			if (
+				cell.classList.contains("opponent-gameboard") &&
+				this.mode == "cpu"
+			) {
+				cell.addEventListener(
+					"click",
+					this.handleAttackListener.bind(this, cell)
+				);
+			} else if (this.mode == "friend") {
+				cell.addEventListener(
+					"click",
+					this.handleAttackListener.bind(this, cell)
+				);
+			}
 		});
 
 		await battlePromise;
@@ -455,6 +466,7 @@ class GameManager {
 		}
 	}
 
+	// TODO: Make random cell more efficient by selecting only free random coords
 	handleAttack(cell) {
 		const coords = Array.from(cell.dataset.coords.split("-").map(Number));
 		const clickedBoard = cell.classList[1];
