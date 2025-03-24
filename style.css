@@ -978,13 +978,14 @@ h2#start-placing-title {
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
+	width: 100vw;
 	gap: 20px;
 }
 
 #winner-title {
 	font-family: "Inter", Arial, Helvetica, sans-serif;
 	font-weight: 800;
-	font-size: 7rem;
+	font-size: 10vw;
 	color: white;
 	margin: 0;
 }
@@ -1012,6 +1013,13 @@ h2#start-placing-title {
 	box-shadow: 4px 4px black;
 	cursor: pointer;
 	transition: all 200ms ease;
+}
+
+@media (max-width: 500px) {
+	.winner-options-container {
+		display: flex;
+		flex-direction: column;
+	}
 }
 
 .winner-options-container > button:hover {
